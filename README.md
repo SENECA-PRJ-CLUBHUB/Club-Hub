@@ -6,7 +6,7 @@
 
     2. Display upcoming events on the welcome page (#5).
 
-* Priyansh (me):
+* Priyansh:
 
     1. Implement sign-in functionality (#2).
  
