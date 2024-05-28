@@ -1,19 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8" />
     <meta name="author" content="Nishit Shah" />
-
-    <title>Club Hub
-    </title>
+    <title>Club Hub</title>
     <link rel="stylesheet" href="/naruto.css" type="text/css" />
-
+    <link rel="icon" type="image/x-icon" href="/public/img/clubhub_logo.png">
     <script src="/public/code.js"></script>
 </head>
-
 <body>
-
     <div class="header">
         <div class="navbar">
             <div class="container">
@@ -32,31 +27,51 @@
         <p class='masthead-intro'>&nbsp;</p>
         <h1 class='masthead-heading'>Maple Leaf High School</h1>
     </header>
-    
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
+    <br>
+    <button class="prev" onclick="scrollCarousel(-1)">&#10094;</button>
+    <div class="center-container">
+        <div class="carousel-container">
+            
+            <div class="event-cards" id="event-cards"></div>
+            
+        </div>
+    </div>   
+    <button class="next" onclick="scrollCarousel(1)">&#10095;</button> 
 
     <footer class="content-footer" style="margin-bottom: 0%;">
         <p>Stay tuned for future updates, till then, you can contact us on:</p>
         <ul class="social">
-            <li><a class="css-is-deranged" href="mailto:ngshah3@myseneca.ca"
-                    style="color: #ca0707;">ngshah3@myseneca.ca</a></li>
+            <li><a class="css-is-deranged" href="mailto:ngshah3@myseneca.ca" style="color: #ca0707;">ngshah3@myseneca.ca</a></li>
         </ul>
     </footer>
-</body>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const response = await fetch('/api/events');
+            const events = await response.json();
+            const eventCardsContainer = document.getElementById('event-cards');
+
+            events.forEach(event => {
+                const card = document.createElement('div');
+                card.classList.add('event-card');
+                card.innerHTML = `
+                    <h2>${event.eventName}</h2>
+                    <p><strong>Date:</strong> ${event.date}</p>
+                    <p><strong>Time:</strong> ${event.time}</p>
+                    <p><strong>Location:</strong> ${event.location}</p>
+                    <p>${event.eventDescription}</p>
+                `;
+                eventCardsContainer.appendChild(card);
+            });
+        });
+
+        function scrollCarousel(direction) {
+            const container = document.getElementById('event-cards');
+            container.scrollBy({
+                left: direction * container.clientWidth,
+                behavior: 'smooth'
+            });
+        }
+    </script>
+</body>
 </html>
