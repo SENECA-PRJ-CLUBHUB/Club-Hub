@@ -2,87 +2,286 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="author" content="Nishit Shah" />
-
-    <title>Club Hub
-    </title>
-    <link rel="stylesheet" href="/naruto.css" type="text/css" />
+    <meta charset="utf-8">
+    <meta name="author" content="Nishit Shah">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Club Hub</title>
+    <link rel="stylesheet" href="/naruto.css" type="text/css">
     <link rel="icon" type="image/x-icon" href="/public/img/clubhub_logo.png">
     <script src="/public/code.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        .navbar {
+            position: sticky;
+            top: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #333;
+            padding: 10px 20px;
+            z-index: 1000;
+        }
+
+        .navbar .left,
+        .navbar .right {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar ul {
+            display: flex;
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar ul li {
+            margin-right: 20px;
+        }
+
+        .navbar ul li a {
+            text-decoration: none;
+            color: white;
+            padding: 10px 20px;
+            background-color: #444;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .navbar ul li a:hover,
+        .navbar ul li.active a {
+            background-color: #555;
+        }
+
+        .navbar ul li.active a {
+            pointer-events: none;
+        }
+
+        .search-sort-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: #fff;
+            margin: 20px auto;
+            width: 80%;
+            max-width: 800px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        .search-bar {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .search-bar input[type="text"] {
+            width: calc(100% - 40px);
+            padding: 10px 15px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fff;
+            outline: none;
+            box-shadow: none;
+        }
+
+        .search-bar input[type="text"]:focus {
+            border-color: #007bff;
+            /* Focus state border color */
+        }
+
+        .search-bar .search-icon {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            background-image: url('/img/magnifying_glass.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+            cursor: pointer;
+        }
+
+        .sort-dropdown select {
+            padding: 10px;
+            font-size: 18px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .clubs-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+        }
+
+        .club-card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin: 10px 0;
+            padding: 20px;
+            width: 100%;
+            max-width: 1000px;
+            transition: transform 0.2s;
+        }
+
+        .club-card:hover {
+            transform: scale(1.05);
+        }
+
+        .club-card-content {
+            display: flex;
+            align-items: flex-start;
+            /* Align items at the start of the flex container */
+        }
+
+        .club-card img {
+            width: 100px;
+            height: 100px;
+            border-radius: 10px;
+            margin-right: 65px;
+        }
+
+        .club-info {
+            flex: 1;
+        }
+
+        .club-info h3 {
+            margin-top: 0;
+            /* Remove default margin */
+            font-size: 30px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .club-info strong {
+            margin-right: 10px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .club-info p {
+            margin: 5px 0;
+            font-size: 20px;
+            color: #666;
+        }
+
+        .details-btn {
+            margin-left: auto;
+            font-size: 18px;
+            padding: 12px 24px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .details-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 
 <body>
-
-    <div class="header">
-        <div class="navbar">
-            <div class="container">
-                <ul>
-                    <li style="font-size: larger; font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;">Club Hub</li>
-                    <li><a href="/home">Home</a></li>
-                    <li class="active"><a href="/clubs">Clubs</a></li>
-                    <li><a href="/events">Events</a></li>
-                    <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
-                    <li style="color: #ca070700; font-weight: bold;">Sign in</li>
-                </ul>
-            </div>
+    <div class="navbar">
+        <div class="left">
+            <ul>
+                <li><a href="/studentHome">Student Home</a></li>
+                <li><a href="/events">Events</a></li>
+                <li class="active"><a href="#">Clubs</a></li>
+            </ul>
+        </div>
+        <div class="right">
+            <!-- Add user-specific elements here if needed -->
         </div>
     </div>
-    
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
 
-    <footer class="content-footer" style="margin-bottom: 0%;">
-        <p>Stay tuned for future updates, till then, you can contact us on:</p>
+    <div class="search-sort-container">
+        <div class="search-bar">
+            <input type="text" id="clubSearch" onkeyup="searchClubs()" placeholder="Search for Clubs..">
+        </div>
+        <div class="sort-dropdown">
+            <label for="sortClubs">Sort by: </label>
+            <select id="sortClubs" onchange="sortClubs()">
+                <option value="asc">Name Ascending</option>
+                <option value="desc">Name Descending</option>
+            </select>
+        </div>
+    </div>
+
+    <div id="clubs-container" class="clubs-container"></div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            fetchClubs();
+        });
+
+        async function fetchClubs() {
+            const search = document.getElementById("clubSearch").value;
+            const sort = document.getElementById("sortClubs").value;
+            const response = await fetch(`/api/clubs?search=${search}&sort=${sort}`);
+            const clubs = await response.json();
+            displayClubs(clubs);
+        }
+
+        function displayClubs(clubs) {
+            const container = document.getElementById("clubs-container");
+            container.innerHTML = "";
+            clubs.forEach(club => {
+                const clubCard = document.createElement("div");
+                clubCard.classList.add("club-card");
+                clubCard.innerHTML = `
+            <div class="club-card-content">
+                <img src="${club.photo}" alt="${club.clubName}">
+                <div class="club-info">
+                    <h3>${club.clubName}</h3>
+                    <p><strong>Category:</strong> ${club.category}</p>
+                    <p>${club.description}</p>
+                </div>
+                <button class="details-btn" onclick="redirectToClubDetails(${club.id})">Details</button>
+            </div>
+        `;
+                container.appendChild(clubCard);
+            });
+        }
+
+        function redirectToClubDetails() {
+            window.location.href = '/clubdetails.html';
+        }
+
+        function searchClubs() {
+            fetchClubs();
+        }
+
+        function sortClubs() {
+            fetchClubs();
+        }
+    </script>
+
+    </br>
+    </br>
+    </br>
+    </br>
+    </br>
+    </br>
+    <footer class="content-footer">
+        <p>Stay tuned for future updates, till then, you can contact us at:</p>
         <ul class="social">
-            <li><a class="css-is-deranged" href="mailto:ngshah3@myseneca.ca"
-                    style="color: #ca0707;">ngshah3@myseneca.ca</a></li>
+            <li><a class="css-is-deranged" href="mailto:ngshah3@myseneca.ca">ngshah3@myseneca.ca</a></li>
         </ul>
     </footer>
 </body>

@@ -1,78 +1,148 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="utf-8" />
-    <meta name="author" content="Nishit Shah" />
-
-    <title>Club Hub
-    </title>
-    <link rel="stylesheet" href="/naruto.css" type="text/css" />
+    <meta charset="utf-8">
+    <meta name="author" content="Nishit Shah">
+    <title>Club Hub - Sign In</title>
+    <link rel="stylesheet" href="/naruto.css" type="text/css">
     <link rel="icon" type="image/x-icon" href="/public/img/clubhub_logo.png">
     <script src="/public/code.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            background-color: #F4F4F9; /* Light beige */
+        }
+
+        .center-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .form-container {
+            border: 1px solid #8A3324; /* Dark terracotta */
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #FEECDC; /* Light beige */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .form-container h2 {
+            margin-bottom: 20px;
+            color: #8A3324; /* Dark terracotta */
+        }
+
+        .form-input {
+            width: calc(100% - 20px);
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #8A3324; /* Dark terracotta */
+            border-radius: 5px;
+        }
+
+        .submit-btn {
+            background-color: #336699; /* Teal */
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 0;
+            width: calc(100% - 20px);
+        }
+
+        .submit-btn:hover {
+            background-color: #33CCFF; /* Bright blue */
+        }
+
+        .back-link, .register-link {
+            display: inline-block;
+            background-color: #336699; /* Teal */
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            width: calc(100% - 20px);
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .back-link:hover, .register-link:hover {
+            background-color: #33CCFF; /* Bright blue */
+        }
+
+        .near-bottom {
+            text-align: center;
+            padding: 20px 0;
+            color: #8A3324; /* Dark terracotta */
+        }
+
+        .content-footer {
+            background-color: #333; 
+            color: #EAEAEA; /* Light beige */
+            padding: 20px 0;
+            text-align: center;
+            width: 100%;
+        }
+
+        .social {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 10px;
+        }
+
+        .social li {
+            display: inline;
+            margin: 0 10px;
+        }
+
+        .social a {
+            color: #FFC107; /* Bright orange */
+            text-decoration: none;
+        }
+
+        .social a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
-
 <body>
-
-    <div class="header">
-        <div class="navbar">
-            <div class="container">
-                <ul>
-                    <li
-                        style="font-size: larger; font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;">
-                        Club Hub</li>
-                    <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sign
-                        In
-                        Page&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    </li>
-                    <li><a href="/home">Back -></a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
     <div class="center-form">
-        <h2 class="title">Sign In to Club Hub</h2> <br>
+        <h2 class="title">Sign In to Club Hub</h2>
         <div class="form-container">
             <form id="signInForm" method="post">
-                <p class="center-text2">Enter Username: &nbsp;&nbsp; <input type="text" name="name" class="form-input" placeholder="UserID"></p>
-                <p class="center-text2">Enter Password: &nbsp;&nbsp; <input type="password" name="password" class="form-input" placeholder="Password"></p>
-                <button type="button" class="submit-btn" onclick="submitForm('/studentSignIn')">STUDENT SIGN IN</button> &nbsp;&nbsp;&nbsp;
+                <p><label for="name">Enter Username:</label> <input type="text" id="name" name="name" class="form-input" placeholder="UserID"></p>
+                <p><label for="password">Enter Password:</label> <input type="password" id="password" name="password" class="form-input" placeholder="Password"></p>
+                <button type="button" class="submit-btn" onclick="submitForm('/studentSignIn')">STUDENT SIGN IN</button>
                 <button type="button" class="submit-btn" onclick="submitForm('/adminSignIn')">ADMIN SIGN IN</button>
+                <a href="/home" class="back-link" style="color:#fff">Back</a>
             </form>
         </div>
+        <div class="near-bottom">
+            <p class="center-text">Don't have an Account? <a href="/registerPage" class="register-link" style="color:#fff">REGISTER</a></p>
+        </div>
     </div>
-
-    <div class="near-bottom">
-        <p class="center-text">Don't have an Account? <a href="/registerPage" class="register-link">REGISTER</a></p>
-    </div>
-
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-   
-    
-    
-
-    <footer class="content-footer" style="margin-bottom: 0%;">
-        <p>Stay tuned for future updates, till then, you can contact us on:</p>
+    <footer class="content-footer">
+        <p>Stay tuned for future updates, till then, you can contact us at:</p>
         <ul class="social">
-            <li><a class="css-is-deranged" href="mailto:ngshah3@myseneca.ca"
-                    style="color: #ca0707;">ngshah3@myseneca.ca</a></li>
+            <li><a class="css-is-deranged" href="mailto:ngshah3@myseneca.ca">ngshah3@myseneca.ca</a></li>
         </ul>
     </footer>
-
     <script>
         function submitForm(action) {
             var form = document.getElementById('signInForm');
@@ -81,5 +151,4 @@
         }
     </script>
 </body>
-
 </html>

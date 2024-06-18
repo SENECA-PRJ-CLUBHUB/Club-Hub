@@ -1,72 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="utf-8" />
-    <meta name="author" content="Nishit Shah" />
-
-    <title>Club Hub
-    </title>
-    <link rel="stylesheet" href="/naruto.css" type="text/css" />
+    <meta charset="utf-8">
+    <meta name="author" content="Nishit Shah">
+    <title>Club Hub</title>
+    <link rel="stylesheet" href="/naruto.css" type="text/css">
     <link rel="icon" type="image/x-icon" href="/public/img/clubhub_logo.png">
     <script src="/public/code.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        }
+        .navbar ul {
+            margin: 0;
+            padding: 0;
+            list-style-type: none;
+        }
+        .navbar ul li {
+            display: inline;
+            margin-right: 20px;
+        }
+        .center-form {
+            text-align: center;
+        }
+        .form-container {
+            display: inline-block;
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 5px;
+            background-color: #FEECDC;
+        }
+        .form-input {
+            margin: 5px;
+        }
+        .submit-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .near-bottom {
+            text-align: center;
+        }
+        .center-text {
+            margin: 0;
+        }
+        .content-footer {
+            margin-bottom: 0;
+            text-align: center;
+        }
+        .social {
+            list-style-type: none;
+            padding: 0;
+        }
+    </style>
 </head>
-
 <body>
-
     <div class="header">
         <div class="navbar">
             <div class="container">
                 <ul>
                     <li style="font-size: larger; font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;">Club Hub</li>
-                    <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Registration Page&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
-                    <li><a href="/home">Back -></a></li>
+                    <li><a href="/home">Back</a></li>
                 </ul>
             </div>
         </div>
     </div>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
+    <br><br><br><br>
     <div class="center-form">
-        <h2 class="title">Register for Club Hub</h2> <br>
+        <h2 class="title">Register for Club Hub</h2>
         <div class="form-container">
             <form action="/registerPage" method="post" enctype="multipart/form-data">
-
-                <p class="center-text2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Upload Photo: &nbsp;<input type="file" name="photo" class="form-input"></p>
-                <p class="center-text2">&nbsp;&nbsp;&nbsp;Enter Username: &nbsp;&nbsp; <input type="text" name="userName"
-                        class="form-input" placeholder="UserID"></p>
-                <p class="center-text2">&nbsp; Create Password: &nbsp;&nbsp; <input type="password" name="password"
-                        class="form-input" placeholder="Password"></p>
-                <p class="center-text2">Confirm Password: &nbsp;&nbsp; <input type="password" name="password2"
-                        class="form-input" placeholder="Password"></p><br><br>
+                <p>Upload Photo: <input type="file" name="photo" class="form-input"></p>
+                <p>Enter Username:   &nbsp; <input type="text" name="userName" class="form-input" placeholder="UserID"></p>
+                <p>Create Password:  &nbsp; <input type="password" name="password" class="form-input" placeholder="Password"></p>
+                <p>Confirm Password: <input type="password" name="password2" class="form-input" placeholder="Password"></p><br><br>
                 <button type="submit" class="submit-btn">STUDENT REGISTER</button>
-
             </form>
         </div>
     </div>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
+    <br><br><br><br>
     <div class="near-bottom">
-        <p class="center-text">For admin registration; you can contact Club Hub Support.</p>
+        <p class="center-text">For admin registration, please contact Club Hub Support.</p>
     </div>
-    <br/>
-    <br/>
-    <br/>
-    
-
-   
-
-    <footer class="content-footer" style="margin-bottom: 0%;">
+    <br><br><br><br>
+    <footer class="content-footer">
         <p>Stay tuned for future updates, till then, you can contact us on:</p>
         <ul class="social">
-            <li><a class="css-is-deranged" href="mailto:ngshah3@myseneca.ca"
-                    style="color: #ca0707;">ngshah3@myseneca.ca</a></li>
+            <li><a class="css-is-deranged" href="mailto:ngshah3@myseneca.ca" style="color: #ca0707;">ngshah3@myseneca.ca</a></li>
         </ul>
     </footer>
 </body>
-
 </html>

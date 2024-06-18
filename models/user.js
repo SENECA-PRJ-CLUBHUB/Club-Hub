@@ -27,7 +27,7 @@ const userSchema = new Schema({
   ],
   id: {
     type: Number,
-    default: 1, // All users will have an id of 1 by default
+    default: 1, 
     required: true,
   },
 });

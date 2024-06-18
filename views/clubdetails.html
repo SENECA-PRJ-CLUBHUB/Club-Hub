@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="author" content="Nishit Shah">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Club Details</title>
+    <link rel="stylesheet" href="/naruto.css" type="text/css">
+    <link rel="icon" type="image/x-icon" href="/public/img/clubhub_logo.png">
+    <script src="/public/code.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .navbar {
+            position: sticky;
+            top: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #333;
+            padding: 10px 20px;
+            z-index: 1000;
+        }
+        .navbar .left, .navbar .right {
+            display: flex;
+            align-items: center;
+        }
+        .navbar ul {
+            display: flex;
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar ul li {
+            margin-right: 20px;
+        }
+        .navbar ul li a {
+            text-decoration: none;
+            color: white;
+            padding: 10px 20px;
+            background-color: #444;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .navbar ul li a:hover, .navbar ul li.active a {
+            background-color: #555;
+        }
+        .content {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .content h2 {
+            margin-top: 0;
+        }
+        .club-image {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .club-description, .club-events {
+            margin-bottom: 20px;
+        }
+        .club-events ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .club-events ul li {
+            background-color: #f4f4f4;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .interaction {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .interaction button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background-color: #333;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .interaction button:hover {
+            background-color: #555;
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #333;
+            color: white;
+            margin-top: 20px;
+        }
+        .social {
+            list-style-type: none;
+            padding: 0;
+        }
+        .social li {
+            display: inline;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="left">
+            <ul>
+                <li class="links"><a href="/home">Home</a></li>
+                <li class="links"><a href="/clubs">Clubs</a></li>
+                <li class="links"><a href="/events">Events</a></li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="content">
+        <img src="" alt="Club Image" class="club-image" id="clubImage">
+        <h2 id="clubName">Club Name</h2>
+        <div class="club-description">
+            <p id="clubDescription">Club Description</p>
+        </div>
+        <div class="club-events">
+            <h3>Events</h3>
+            <ul id="clubEvents">
+                <li>Event 1</li>
+                <li>Event 2</li>
+                <li>Event 3</li>
+                <!-- Add more events as needed -->
+            </ul>
+        </div>
+        <div class="interaction">
+            <button onclick="joinClub()">Join Club</button>
+            <button onclick="rateClub()">Rate Club</button>
+        </div>
+    </div>
+    
+    <footer>
+        <p>Stay tuned for future updates, till then, you can contact us on:</p>
+        <ul class="social">
+            <li><a href="mailto:ngshah3@myseneca.ca" style="color: #ca0707;">ngshah3@myseneca.ca</a></li>
+        </ul>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const params = new URLSearchParams(window.location.search);
+            const clubName = params.get('name');
+            
+            const clubDetails = {
+                'Science Club': {
+                    description: 'Explore the wonders of science through hands-on experiments and exciting projects.',
+                    image: '/public/img/science_club.jpg',
+                    events: ['Science Fair', 'Robotics Workshop', 'Astronomy Night']
+                },
+                'Art Club': {
+                    description: 'Unleash your creativity and express yourself through various forms of art.',
+                    image: '/public/img/art_club.jpg',
+                    events: ['Painting Exhibition', 'Sketching Workshop', 'Art Gallery Tour']
+                },
+                'Music Club': {
+                    description: 'Join us to learn, play, and share music from different genres and cultures.',
+                    image: '/public/img/music_club.jpg',
+                    events: ['Concert Night', 'Music Theory Workshop', 'Band Rehearsal']
+                },
+                'Sports Club': {
+                    description: 'Stay active and healthy by participating in various sports and fitness activities.',
+                    image: '/public/img/sports_club.jpg',
+                    events: ['Football Tournament', 'Basketball Game', 'Fitness Bootcamp']
+                },
+                'Drama Club': {
+                    description: 'Explore your acting talents and participate in exciting theater productions.',
+                    image: '/public/img/drama_club.jpg',
+                    events: ['Play Rehearsal', 'Improv Night', 'Acting Workshop']
+                },
+                'Robotics Club': {
+                    description: 'Build and program robots to compete in thrilling competitions.',
+                    image: '/public/img/robotics_club.jpg',
+                    events: ['Robotics Competition', 'Coding Session', 'Tech Talk']
+                }
+            };
+
+            if (clubName && clubDetails[clubName]) {
+                document.getElementById('clubName').textContent = clubName;
+                document.getElementById('clubDescription').textContent = clubDetails[clubName].description;
+                document.getElementById('clubImage').src = clubDetails[clubName].image;
+                
+                const eventsList = document.getElementById('clubEvents');
+                eventsList.innerHTML = '';
+                clubDetails[clubName].events.forEach(event => {
+                    const li = document.createElement('li');
+                    li.textContent = event;
+                    eventsList.appendChild(li);
+                });
+            }
+        });
+
+        function joinClub() {
+            alert('You have joined the club!');
+        }
+
+        function rateClub() {
+            alert('Thank you for rating the club!');
+        }
+    </script>
+</body>
+</html>

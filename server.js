@@ -14,20 +14,34 @@ const PORT = process.env.PORT || 8080;
 const MONGO_URL = process.env.MONGO_URL;
 const SECRET_KEY = process.env.SECRET_KEY;
 
+if (!MONGO_URL) {
+  console.error("Error: MONGO_URL environment variable is not set.");
+  process.exit(1);
+}
+
 mongoose.connect(MONGO_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-});
+})
+  .then(() => {
+    console.log("MongoDB connected...");
+  })
+  .catch((err) => {
+    console.error("MongoDB connection error:", err);
+    process.exit(1);
+  });
 
 const User = require("./models/user");
 const Event = require("./models/event");
+const Club = require("./models/club");
+const Student = require("./models/students");
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
 app.use(
   session({
-    secret: SECRET_KEY,
+    secret: SECRET_KEY || "defaultsecret",
     resave: false,
     saveUninitialized: true,
   })
@@ -56,6 +70,11 @@ app.get("/signInPage", (req, res) => {
 app.get("/registerPage", (req, res) => {
   res.sendFile(path.join(__dirname, "/views/registerPage.html"));
 });
+
+app.get("/clubdetails", (req, res) => {
+  res.sendFile(path.join(__dirname, "/views/club-details.html"));
+});
+
 
 // File upload setup
 const storage = multer.diskStorage({
@@ -104,7 +123,9 @@ app.post("/registerPage", upload.single("photo"), async (req, res) => {
         userName,
         password: hashedPassword,
         photo: req.file ? `/uploads/${req.file.filename}` : null,
-        id: 1,
+        id: "1",  // Ensure this matches the new schema structure
+        clubs: [],  // Initialize as an empty array
+        createdAt: new Date(),  // Ensure createdAt is set to current date/time
       });
 
       await newUser.save();
@@ -172,6 +193,32 @@ app.get("/api/events", async (req, res) => {
   }
 });
 
+// Updated endpoint to fetch clubs with search and sort functionality
+app.get("/api/clubs", async (req, res) => {
+  try {
+    const { search = "", sort = "asc" } = req.query;
+    const sortOptions = { clubName: sort === "asc" ? 1 : -1 };
+
+    const clubs = await Club.find({
+      clubName: { $regex: search, $options: "i" }
+    }).sort(sortOptions);
+
+    res.json(clubs);
+  } catch (error) {
+    console.error("Error fetching clubs:", error);
+    res.status(500).send("Error fetching clubs");
+  }
+});
+
+app.get("/api/user", async (req, res) => {
+  if (!req.session.user) {
+    return res.status(401).send("Unauthorized");
+  }
+
+  const { userName, photo } = req.session.user;
+  res.json({ userName, photo });
+});
+
 app.get("/studentHome", (req, res) => {
   if (!req.session.user || req.session.user.id !== 1) {
     return res.redirect("/signInPage");
@@ -184,6 +231,15 @@ app.get("/adminHome", (req, res) => {
     return res.redirect("/signInPage");
   }
   res.sendFile(path.join(__dirname, "/views/adminHome.html"));
+});
+
+app.get("/signOut", (req, res) => {
+  req.session.destroy(err => {
+    if (err) {
+      return res.status(500).send("Error signing out!");
+    }
+    res.redirect("/home");
+  });
 });
 
 app.listen(PORT, () => {

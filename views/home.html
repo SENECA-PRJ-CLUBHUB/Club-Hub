@@ -1,77 +1,266 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="author" content="Nishit Shah" />
-    <title>Club Hub</title>
-    <link rel="stylesheet" href="/naruto.css" type="text/css" />
+    <meta charset="utf-8">
+    <meta name="author" content="Nishit Shah">
+    <title>Maple Leaf High School - Club Hub</title>
+    <link rel="stylesheet" href="/naruto.css" type="text/css">
     <link rel="icon" type="image/x-icon" href="/public/img/clubhub_logo.png">
-    <script src="/public/code.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            overflow-x: hidden;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+        .navbar {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+        }
+        .navbar ul {
+            display: flex;
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar ul li a {
+            text-decoration: none;
+            color: white;
+            padding: 10px 20px;
+            background-color: #444;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .navbar ul li a:hover, .navbar ul li.active a {
+            background-color: #555;
+        }
+        .masthead {
+            text-align: center;
+            margin-top: 50px;
+        }
+        .masthead-intro {
+            font-size: 1.5em;
+            margin-bottom: 0;
+        }
+        .masthead-heading {
+            font-size: 2.5em;
+            margin-top: 0;
+        }
+        .welcome-section {
+            text-align: center;
+            padding: 50px 20px;
+            background-color: #f5f5f5;
+        }
+        .welcome-section h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        .welcome-section p {
+            font-size: 1.2em;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .highlight {
+            color: #ca0707;
+            font-weight: bold;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #333;
+            color: white;
+            padding-top: 20px;;
+        }
+        .footer p {
+            margin: 0;
+        }
+        .social a {
+            color: #FFC107;
+            text-decoration: none;
+        }
+        .event-card {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            width: 488px;
+            box-sizing: border-box;
+            float: left;
+            height: 135px;
+        }
+    
+        .carousel-container {
+            position: relative;
+            overflow: hidden;
+            width: 95%;
+            margin: 20px 0;
+            justify-content: flex-start; 
+            align-items: flex-start;
+        }
+        .carousel {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+        .carousel-item {
+            min-width: 100%;
+            box-sizing: border-box;
+        }
+        .prev, .next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: #f9f9f9;
+            border: none;
+            color: #000;
+            padding: 10px;
+            cursor: pointer;
+            z-index: 2;
+        }
+        .prev {
+            left: 10px;
+        }
+        .next {
+            right: 10px;
+        }
+        .clear {
+            clear: both;
+        }
+        .fade-in {
+            opacity: 1;
+        }
+        .event-card {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            position: relative; /* Added for positioning */
+            overflow: hidden; /* Ensure the hover effect doesn't overflow */
+        }
+
+        .event-details {
+            margin-bottom: 30px; /* Space below event details */
+        }
+
+        .prev, .next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: #f9f9f9;
+            border: none;
+            color: #000;
+            padding: 10px;
+            cursor: pointer;
+            z-index: 2;
+        }
+        
+        .prev {
+            left: 10px;
+        }
+
+        .next {
+            right: 10px;
+        }
+        .content-footer {
+            background-color: #333; /* Dark purple */
+            color: #EAEAEA; /* Light beige */
+            padding: 20px 0;
+            text-align: center;
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
     <div class="header">
         <div class="navbar">
             <div class="container">
-                <ul>
-                    <li style="font-size: larger; font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;">Club Hub</li>
-                    <li class="active"><a href="/home">Home</a></li>
-                    <li><a href="/clubs">Clubs</a></li>
-                    <li><a href="/events">Events</a></li>
-                    <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
-                    <li><a href="/signInPage">Sign in</a></li>
+                <ul class="navbar-menu">
+                    <li class="club-hub links"><a href="/home">Club Hub</a></li>
+                    <li class="links"><a href="/signInPage">Sign in</a></li>
                 </ul>
             </div>
         </div>
-    </div>
-    <header class='masthead'>
-        <p class='masthead-intro'>&nbsp;</p>
-        <h1 class='masthead-heading'>Maple Leaf High School</h1>
+    </div>    
+    <header class="masthead">
+        <h1 class="masthead-heading">Maple Leaf High School</h1>
     </header>
-    <br>
-    <button class="prev" onclick="scrollCarousel(-1)">&#10094;</button>
-    <div class="center-container">
-        <div class="carousel-container">
-            
-            <div class="event-cards" id="event-cards"></div>
-            
-        </div>
-    </div>   
-    <button class="next" onclick="scrollCarousel(1)">&#10095;</button> 
-
-    <footer class="content-footer" style="margin-bottom: 0%;">
-        <p>Stay tuned for future updates, till then, you can contact us on:</p>
-        <ul class="social">
-            <li><a class="css-is-deranged" href="mailto:ngshah3@myseneca.ca" style="color: #ca0707;">ngshah3@myseneca.ca</a></li>
-        </ul>
-    </footer>
-
+    
+    <section class="welcome-section">
+        <h2>Welcome to Maple Leaf High School Club Hub</h2>
+        <p>At Maple Leaf High School, we believe in the holistic development of our students. Our Club Hub is dedicated to fostering a sense of community and providing students with opportunities to explore their interests and passions. Join us in various clubs and events designed to enrich your high school experience. <span class="highlight">Sign in to explore more clubs and events!</span></p>
+    </section>
+    
     <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            const response = await fetch('/api/events');
-            const events = await response.json();
-            const eventCardsContainer = document.getElementById('event-cards');
+        document.addEventListener('DOMContentLoaded', () => {
+            document.body.classList.add('fade-in');
+            
+            const links = document.querySelectorAll('.navbar a');
+            links.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const target = e.target.getAttribute('href');
+                    document.body.classList.remove('fade-in');
+                    setTimeout(() => {
+                        window.location.href = target;
+                    }, 500);
+                });
+            });
+        });
+    </script>
 
-            events.forEach(event => {
-                const card = document.createElement('div');
-                card.classList.add('event-card');
-                card.innerHTML = `
-                    <h2>${event.eventName}</h2>
+<div class="center-container">
+    <div class="carousel-container">
+       
+        <div class="event-cards" id="event-cards">
+            <button class="prev" onclick="scrollCarousel(-1)">&#10094;</button>
+            <button class="next" onclick="scrollCarousel(1)">&#10095;</button> 
+        </div>
+        
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        const response = await fetch('/api/events');
+        const events = await response.json();
+        const eventCardsContainer = document.getElementById('event-cards');
+
+        events.forEach(event => {
+            const card = document.createElement('div');
+            card.classList.add('event-card');
+            card.innerHTML = `
+                <div class="event-details">
+                    <h2 class="eventName">${event.eventName}</h2>
                     <p><strong>Date:</strong> ${event.date}</p>
                     <p><strong>Time:</strong> ${event.time}</p>
                     <p><strong>Location:</strong> ${event.location}</p>
                     <p>${event.eventDescription}</p>
-                `;
-                eventCardsContainer.appendChild(card);
-            });
+                </div>
+            `;
+            eventCardsContainer.appendChild(card);
         });
+    });
 
-        function scrollCarousel(direction) {
-            const container = document.getElementById('event-cards');
-            container.scrollBy({
-                left: direction * container.clientWidth,
-                behavior: 'smooth'
-            });
-        }
-    </script>
+    function scrollCarousel(direction) {
+        const container = document.getElementById('event-cards');
+        container.scrollBy({
+            left: direction * container.clientWidth,
+            behavior: 'smooth'
+        });
+    }
+</script>
+</br>
+</br>
+</br>
+</br>
+<footer class="content-footer">
+    <p>Stay tuned for future updates, till then, you can contact us at:</p>
+    <ul class="social">
+        <li><a class="css-is-deranged" href="mailto:ngshah3@myseneca.ca">ngshah3@myseneca.ca</a></li>
+    </ul>
+</footer>
 </body>
 </html>
