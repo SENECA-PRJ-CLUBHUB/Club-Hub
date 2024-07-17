@@ -3,6 +3,10 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const clubSchema = new Schema({
+    clubID: {
+        type: Number,
+        required: true
+    },
     clubName: {
         type: String,
         required: true

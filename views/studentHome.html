@@ -9,6 +9,28 @@
     <link rel="icon" type="image/x-icon" href="/public/img/clubhub_logo.png">
     <script src="https://apis.google.com/js/api.js"></script> <!-- Google API Client Library -->
     <script src="/public/code.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('/api/user')
+                .then(response => {
+                    if (!response.ok) {
+                        window.location.href = '/signInPage';
+                    }
+                })
+                .catch(() => {
+                    window.location.href = '/signInPage';
+                });
+        });
+
+        window.onpageshow = function (event) {
+            if (event.persisted) {
+                window.location.href = '/signInPage';
+            }
+        };
+    </script>
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <style>
         body {
             margin: 0;
@@ -111,34 +133,44 @@
             flex: 0 0 calc(100% / 3);
             box-sizing: border-box;
             border: 1px solid #ccc;
-            padding: 10px;
             margin: 10px;
             border-radius: 5px;
             background-color: #f9f9f9;
             position: relative;
-            overflow: hidden;
+            
+            min-height: 145px;
+            width: 430px;
         }
 
+        .event-details {
+            margin: -10px;
+        }
+
+        h2 {
+            margin: 2px;
+        }
+        
 
         .prev,
         .next {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            background-color: #f9f9f9;
+            background-color: rgba(0, 0, 0, 0.5);
             border: none;
-            color: #000;
+            color: #fff;
             padding: 10px;
             cursor: pointer;
             z-index: 2;
+            border-radius: 50%;
         }
 
         .prev {
-            left: 10px;
+            left: -25px;
         }
 
         .next {
-            right: 10px;
+            right: -25px;
         }
 
         .user-info {
@@ -191,16 +223,17 @@
             position: fixed;
             width: 100%;
             bottom: 0;
+            height: 70px;
         }
 
         .moveleftbutton {
-            position:fixed;
+            position: fixed;
             left: 5%;
             top: 600px;
         }
 
         .moverightbutton {
-            position:fixed;
+            position: fixed;
             right: 5%;
             top: 600px;
         }
@@ -240,12 +273,12 @@
         <div class="center-container">
             <div class="carousel-container">
                 <div class="moveleftbutton">
-                <button class="prev" onclick="scrollCarousel(-1)">&#10094;</button>
-            </div>
+                    <button class="prev" onclick="scrollCarousel(-1)">&#10094;</button>
+                </div>
                 <div class="event-cards" id="event-cards"></div>
                 <div class="moverightbutton">
-                <button class="next" onclick="scrollCarousel(1)">&#10095;</button>
-            </div>
+                    <button class="next" onclick="scrollCarousel(1)">&#10095;</button>
+                </div>
             </div>
         </div>
     </div>
@@ -260,28 +293,36 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
-            const response = await fetch('/api/events');
-            const events = await response.json();
-            const eventCardsContainer = document.getElementById('event-cards');
+            try {
+                const eventsResponse = await fetch('/api/events');
+                const events = await eventsResponse.json();
+                const clubsResponse = await fetch('/api/clubs');
+                const clubs = await clubsResponse.json();
+                const eventCardsContainer = document.getElementById('event-cards');
 
-            events.forEach(event => {
-                const card = document.createElement('div');
-                card.classList.add('event-card');
-                card.innerHTML = `
-                    <div class="event-details">
-                        <h2>${event.eventName}</h2>
-                        <p><strong>Date:</strong> ${event.date}</p>
-                        <p><strong>Time:</strong> ${event.time}</p>
-                        <p><strong>Location:</strong> ${event.location}</p>
-                        <p>${event.eventDescription}</p>
-                    </div>
-                    <div class="add-to-calendar" onclick="addToCalendar('${event.eventName}', '${event.date}', '${event.time}', '${event.location}', '${event.eventDescription}')">
-                        Add to Calendar
-                        <div class="add-to-calendar-text">Click to add to Google Calendar</div>
-                    </div>
-                `;
-                eventCardsContainer.appendChild(card);
-            });
+                events.forEach(event => {
+                    const club = clubs.find(club => club.clubID === event.clubID);
+                    const card = document.createElement('div');
+                    card.classList.add('event-card');
+                    card.innerHTML = `
+                <div class="event-details">
+                    <h2>${event.eventName}</h2>
+                                        <p><strong>Date:</strong> ${event.date}</p>
+                    <p><strong>Time:</strong> ${event.time}</p>
+                    <p><strong>Location:</strong> ${event.location}</p>
+                    <p>${event.eventDescription}</p>
+                    <p><strong>Club:</strong> ${club ? club.clubName : 'Unknown'}</p>
+                </div>
+                <div class="add-to-calendar" onclick="addToCalendar('${event.eventName}', '${event.date}', '${event.time}', '${event.location}', '${event.eventDescription}')">
+                    Add to Calendar
+                    <div class="add-to-calendar-text">Click to add to Google Calendar</div>
+                </div>
+            `;
+                    eventCardsContainer.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Error fetching events or clubs:', error);
+            }
 
             const userResponse = await fetch('/api/user');
             const userData = await userResponse.json();
@@ -292,7 +333,7 @@
         function scrollCarousel(direction) {
             const container = document.getElementById('event-cards');
             const cardWidth = container.querySelector('.event-card').offsetWidth;
-            const cardsPerRow = 4; 
+            const cardsPerRow = 3;
 
             container.scrollBy({
                 left: direction * (cardWidth * cardsPerRow),

@@ -96,7 +96,6 @@
 
         .search-bar input[type="text"]:focus {
             border-color: #007bff;
-            /* Focus state border color */
         }
 
         .search-bar .search-icon {
@@ -133,7 +132,7 @@
             margin: 10px 0;
             padding: 20px;
             width: 100%;
-            max-width: 1000px;
+            max-width: 1300px;
             transition: transform 0.2s;
         }
 
@@ -144,12 +143,11 @@
         .club-card-content {
             display: flex;
             align-items: flex-start;
-            /* Align items at the start of the flex container */
         }
 
         .club-card img {
-            width: 100px;
-            height: 100px;
+            width: 130px;
+            height: 130px;
             border-radius: 10px;
             margin-right: 65px;
         }
@@ -160,7 +158,6 @@
 
         .club-info h3 {
             margin-top: 0;
-            /* Remove default margin */
             font-size: 30px;
             margin-bottom: 20px;
             color: #333;
@@ -234,8 +231,12 @@
             const search = document.getElementById("clubSearch").value;
             const sort = document.getElementById("sortClubs").value;
             const response = await fetch(`/api/clubs?search=${search}&sort=${sort}`);
-            const clubs = await response.json();
-            displayClubs(clubs);
+            if (response.ok) {
+                const clubs = await response.json();
+                displayClubs(clubs);
+            } else {
+                console.error("Failed to fetch clubs");
+            }
         }
 
         function displayClubs(clubs) {
@@ -245,22 +246,22 @@
                 const clubCard = document.createElement("div");
                 clubCard.classList.add("club-card");
                 clubCard.innerHTML = `
-            <div class="club-card-content">
-                <img src="${club.photo}" alt="${club.clubName}">
-                <div class="club-info">
-                    <h3>${club.clubName}</h3>
-                    <p><strong>Category:</strong> ${club.category}</p>
-                    <p>${club.description}</p>
-                </div>
-                <button class="details-btn" onclick="redirectToClubDetails(${club.id})">Details</button>
-            </div>
-        `;
+                    <div class="club-card-content">
+                        <img src="${club.photo}" alt="${club.clubName}">
+                        <div class="club-info">
+                            <h3>${club.clubName}</h3>
+                            <p><strong>Category:</strong> ${club.category}</p>
+                            <p>${club.description}</p>
+                        </div>
+                        <button class="details-btn" onclick="redirectToClubDetails(${club._id})">Details</button>
+                    </div>
+                `;
                 container.appendChild(clubCard);
             });
         }
 
-        function redirectToClubDetails() {
-            window.location.href = '/clubdetails.html';
+        function redirectToClubDetails(id) {
+            window.location.href = `/clubdetails.html?id=${id}`;
         }
 
         function searchClubs() {

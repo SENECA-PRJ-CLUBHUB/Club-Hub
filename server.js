@@ -19,10 +19,7 @@ if (!MONGO_URL) {
   process.exit(1);
 }
 
-mongoose.connect(MONGO_URL, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
+mongoose.connect(MONGO_URL)
   .then(() => {
     console.log("MongoDB connected...");
   })
@@ -35,8 +32,10 @@ const User = require("./models/user");
 const Event = require("./models/event");
 const Club = require("./models/club");
 const Student = require("./models/students");
+const Review = require("./models/reviews"); // Import your Review model
 
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(express.static("public"));
 
 app.use(
@@ -74,7 +73,6 @@ app.get("/registerPage", (req, res) => {
 app.get("/clubdetails", (req, res) => {
   res.sendFile(path.join(__dirname, "/views/club-details.html"));
 });
-
 
 // File upload setup
 const storage = multer.diskStorage({
@@ -193,17 +191,33 @@ app.get("/api/events", async (req, res) => {
   }
 });
 
-// Updated endpoint to fetch clubs with search and sort functionality
 app.get("/api/clubs", async (req, res) => {
   try {
-    const { search = "", sort = "asc" } = req.query;
-    const sortOptions = { clubName: sort === "asc" ? 1 : -1 };
+    const search = req.query.search || '';
+    const sort = req.query.sort || 'asc';
 
     const clubs = await Club.find({
-      clubName: { $regex: search, $options: "i" }
-    }).sort(sortOptions);
+      clubName: { $regex: search, $options: 'i' }
+    }).populate('members', 'userName');
 
-    res.json(clubs);
+    const sortedClubs = clubs.sort((a, b) => {
+      if (sort === 'asc') {
+        return a.clubName.localeCompare(b.clubName);
+      } else {
+        return b.clubName.localeCompare(a.clubName);
+      }
+    });
+
+    // Calculate member count for each club
+    const clubsWithMemberCount = sortedClubs.map(club => {
+      const memberCount = club.members ? club.members.length : 0;
+      return {
+        ...club.toObject(),
+        memberCount
+      };
+    });
+
+    res.json(clubsWithMemberCount);
   } catch (error) {
     console.error("Error fetching clubs:", error);
     res.status(500).send("Error fetching clubs");
@@ -231,6 +245,149 @@ app.get("/adminHome", (req, res) => {
     return res.redirect("/signInPage");
   }
   res.sendFile(path.join(__dirname, "/views/adminHome.html"));
+});
+
+// Fetch club details by ID with members' usernames
+app.get("/api/clubs/:id", async (req, res) => {
+  try {
+    const clubId = req.params.id;
+    const club = await Club.findById(clubId).populate('members', 'userName'); // Populate members with their userName
+
+    if (!club) {
+      return res.status(404).send("Club not found");
+    }
+
+    res.json(club);
+  } catch (error) {
+    console.error("Error fetching club details:", error);
+    res.status(500).send("Error fetching club details");
+  }
+});
+
+// Update club details
+app.put("/api/clubs/:id", async (req, res) => {
+  if (!req.session.user || req.session.user.id !== 2) {
+    return res.status(403).send("Forbidden");
+  }
+
+  try {
+    const clubId = req.params.id;
+    const { clubName, description, category } = req.body;
+
+    const club = await Club.findByIdAndUpdate(
+      clubId,
+      { clubName, description, category },
+      { new: true }
+    );
+
+    const memberCount = await Student.countDocuments({ club: club._id });
+    res.json({ ...club.toObject(), memberCount });
+  } catch (error) {
+    console.error("Error updating club details:", error);
+    res.status(500).send("Error updating club details");
+  }
+});
+
+// Reviews endpoint
+app.get("/api/reviews", async (req, res) => {
+  try {
+    const reviews = await Review.find();
+    res.json(reviews);
+  } catch (error) {
+    console.error("Error fetching reviews:", error);
+    res.status(500).send("Error fetching reviews");
+  }
+});
+
+// Fetch event details by ID (assuming eventID is an integer)
+app.get("/api/events/:id", async (req, res) => {
+  try {
+    const eventId = parseInt(req.params.id);
+    const event = await Event.findOne({ eventID: eventId });
+    if (!event) {
+      return res.status(404).send("Event not found");
+    }
+    res.json(event);
+  } catch (error) {
+    console.error("Error fetching event details:", error);
+    res.status(500).send("Error fetching event details");
+  }
+});
+
+// Update event details
+app.put("/api/events/:id", async (req, res) => {
+  if (!req.session.user || req.session.user.id !== 2) {
+    return res.status(403).send("Forbidden");
+  }
+
+  try {
+    const eventId = parseInt(req.params.id);
+    const { eventName, date, time, location, eventDescription } = req.body;
+
+    const event = await Event.findOneAndUpdate(
+      { eventID: eventId },
+      { eventName, date, time, location, eventDescription },
+      { new: true }
+    );
+
+    res.json(event);
+  } catch (error) {
+    console.error("Error updating event details:", error);
+    res.status(500).send("Error updating event details");
+  }
+});
+
+// Delete event
+app.delete("/api/events/:id", async (req, res) => {
+  if (!req.session.user || req.session.user.id !== 2) {
+    return res.status(403).send("Forbidden");
+  }
+
+  try {
+    const eventId = parseInt(req.params.id);
+    const event = await Event.findOneAndDelete({ eventID: eventId });
+
+    if (!event) {
+      return res.status(404).send("Event not found");
+    }
+
+    res.send("Event deleted successfully");
+  } catch (error) {
+    console.error("Error deleting event:", error);
+    res.status(500).send("Error deleting event");
+  }
+});
+
+// Add event
+app.post("/api/events", async (req, res) => {
+  if (!req.session.user || req.session.user.id !== 2) {
+    return res.status(403).send("Forbidden");
+  }
+
+  const { eventID, eventName, date, time, location, eventDescription, clubID } = req.body;
+
+  if (!eventID || !eventName || !date || !time || !location || !eventDescription || !clubID) {
+    return res.status(400).send("All fields are required");
+  }
+
+  try {
+    const newEvent = new Event({
+      eventID,
+      eventName,
+      date,
+      time,
+      location,
+      eventDescription,
+      clubID
+    });
+
+    await newEvent.save();
+    console.log("Event added successfully:", newEvent); // Log the saved event
+    res.status(201).send("Event added successfully");
+  } catch (error) {
+    console.error("Error adding event:", error);
+    res.status(500).send("Error adding event");
+  }
 });
 
 app.get("/signOut", (req, res) => {

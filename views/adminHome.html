@@ -1,71 +1,841 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="author" content="Nishit Shah">
     <title>Club Hub</title>
     <link rel="stylesheet" href="/naruto.css" type="text/css">
     <link rel="icon" type="image/x-icon" href="/public/img/clubhub_logo.png">
+    <script src="https://apis.google.com/js/api.js"></script> <!-- Google API Client Library -->
     <script src="/public/code.js"></script>
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <style>
         body {
             margin: 0;
             padding: 0;
             font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            background: #f7f7f7;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
         }
-        .navbar ul {
+
+        .header,
+        .footer {
+            background: #ccc;
+            padding: 10px 0;
+            flex-shrink: 0;
+        }
+
+        .header .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            height: 100px;
+            margin: -10px;
+        }
+
+        .header .navbar ul {
+            list-style-type: none;
             margin: 0;
             padding: 0;
-            list-style-type: none;
+            display: flex;
+            align-items: center;
         }
-        .navbar ul li {
-            display: inline;
+
+        .header .navbar ul li {
             margin-right: 20px;
+            font-size: 1.2em;
         }
-        .navbar ul li.active {
-            font-size: larger;
+
+        .header .navbar ul li a {
+            text-decoration: none;
+            color: rgb(242, 6, 6);
+            font-weight: bold;
         }
-        .masthead-intro {
+
+        .header .navbar ul li.active a {
+            color: red;
+        }
+
+        .main-content {
+            overflow-y: auto;
+            padding: 20px;
+            flex-grow: 1;
+        }
+
+        .profile,
+        .events,
+        .reviews {
+            background: white;
+            margin: 20px 0;
+            padding: 60px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .reviews .review {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .reviews .review p {
+            margin: 5px 0;
+        }
+
+        .reviews .review {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .reviews .review p {
+            margin: 5px 0;
+        }
+
+        .profile {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .profile .avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+        }
+
+        .profile .details h2 {
+            margin-top: 0;
+        }
+
+        .clubs {
+            margin: 20px 0;
+        }
+
+        .clubs-header {
+            margin-bottom: 10px;
+        }
+
+        .clubs-content {
+            max-height: 840px;
+            overflow-y: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .clubs #club-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .clubs .club-card {
+            background: #f7f7f7;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .clubs .club-card h2 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        .clubs .club-card p {
+            margin: 5px 0;
+        }
+
+        .clubs .edit-club-btn {
+            margin-top: 10px;
+            padding: 8px 12px;
+            background-color: #4285f4;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .clubs .edit-club-btn:hover {
+            background-color: #357ae8;
+        }
+
+        .events {
+            margin: 30px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            padding: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            height: 670px;
+        }
+
+        .events h2 {
             margin: 0;
+            display: inline-block;
         }
-        .masthead-heading {
-            margin: 0;
+
+        .add-event-button {
+            background-color: #4285f4;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            position: absolute;
+            top: 10px;
+            right: 10px;
         }
-        .content-footer {
-            margin-bottom: 0;
+
+        .add-event-button:hover {
+            background-color: #357ae8;
         }
-        .social {
+
+        .events-content {
+            height: 580px;
+            overflow-y: auto;
+            padding: 0 20px 20px 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background: white;
+            margin-top: 20px;
+        }
+
+        .event-cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            width: 100%;
+            height: 100%;
+            margin-top: 10px;
+        }
+
+        .event-card {
+            flex: 1 1 calc(50% - 20px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            background-color: #fff;
+            box-sizing: border-box;
+        }
+
+        .event-card .event-details {
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        .event-card .event-actions {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .event-card .event-actions button {
+            margin-top: 5px;
+            background-color: #4285f4;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .event-card .event-actions button:hover {
+            background-color: #357ae8;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            padding-top: 100px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0, 0, 0);
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            animation: modalopen 0.5s;
+        }
+
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        @keyframes modalopen {
+            from {
+                opacity: 0;
+                transform: translateY(-100px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="time"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="date"]:focus,
+        input[type="time"]:focus,
+        textarea:focus,
+        select:focus {
+            border-color: #4285f4;
+            outline: none;
+        }
+
+        button[type="submit"] {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #4285f4;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #357ae8;
+        }
+
+        .club-image {
+            width: 100%;
+            height: 200px;
+            object-fit: contain;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .member-list {
             list-style-type: none;
             padding: 0;
+            margin: 10px 0;
         }
-        .social li {
-            display: inline;
-            margin-right: 10px;
+
+        .member-list li {
+            margin: 5px 0;
+            padding: 8px;
+            background-color: #f7f7f7;
+            border-radius: 5px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
+
 <body>
     <div class="header">
         <div class="navbar">
-            <div class="container">
-                <ul>
-                    <li>Club Hub</li>
-                    <li class="active"><a>Admin Home</a></li>
-                    <li><a href="/home">Sign Out</a></li>
-                </ul>
+            <ul>
+                <li><a href="#">Club Hub</a></li>
+                <li class="active"><a href="/home">Home</a></li>
+            </ul>
+            <div class="navbar-right">
+                <span id="username">Admin User Name</span>
+                <button onclick="window.location.href='/signOut'">Sign Out</button>
             </div>
         </div>
     </div>
-    <header>
-        <p class="masthead-intro">&nbsp;</p>
-        <h1 class="masthead-heading">Admin Home Page - Sprint 2</h1>
-    </header>
-    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+    <div class="main-content">
+        <div class="profile">
+            <img src="path/to/avatar.png" alt="Avatar" class="avatar" id="user-photo">
+            <div class="details">
+                <h2 id="greeting">Hello, Admin User Name</h2>
+            </div>
+        </div>
+
+        <div class="clubs">
+            <div class="clubs-header">
+                <h2>Club Details:</h2>
+            </div>
+            <div class="clubs-content">
+                <div id="club-cards"></div>
+            </div>
+        </div>
+
+        <div class="events">
+            <h2>Events:</h2>
+            <button class="add-event-button">Add Event</button>
+            <div class="events-content">
+                <div class="event-cards" id="admin-event-cards">
+                </div>
+            </div>
+        </div>
+
+        <div class="reviews">
+            <h2>Club Reviews:</h2>
+        </div>
+    </div>
+
     <footer class="content-footer">
         <p>Stay tuned for future updates, till then, you can contact us on:</p>
         <ul class="social">
-            <li><a class="css-is-deranged" href="mailto:ngshah3@myseneca.ca" style="color: #ca0707;">ngshah3@myseneca.ca</a></li>
+            <li><a href="mailto:ngshah3@myseneca.ca" style="color: #ca0707;">ngshah3@myseneca.ca</a></li>
         </ul>
     </footer>
+
+    <div id="editClubModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Edit Club</h2>
+            <form id="editClubForm">
+                <input type="hidden" id="clubId" name="clubId">
+                <label for="clubName">Club Name:</label>
+                <input type="text" id="clubName" name="clubName" required><br>
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" required></textarea><br>
+                <label for="category">Category:</label>
+                <input type="text" id="category" name="category" required><br>
+                <h3>Members:</h3>
+                <ul id="memberList" class="member-list"></ul>
+                <button type="submit">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="editEventModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Edit Event</h2>
+            <form id="editEventForm">
+                <input type="hidden" id="eventId">
+                <label for="eventName">Event Name:</label>
+                <input type="text" id="eventName" required><br><br>
+                <label for="eventDate">Date:</label>
+                <input type="date" id="eventDate" required><br><br>
+                <label for="eventTime">Time:</label>
+                <input type="time" id="eventTime" required><br><br>
+                <label for="eventLocation">Location:</label>
+                <input type="text" id="eventLocation" required><br><br>
+                <label for="eventDescription">Description:</label>
+                <textarea id="eventDescription" required></textarea><br><br>
+                <button type="submit">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="addEventModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Add Event</h2>
+            <form id="addEventForm">
+                <label for="addEventName">Event Name:</label>
+                <input type="text" id="addEventName" required><br><br>
+                <label for="addEventDate">Date:</label>
+                <input type="date" id="addEventDate" required><br><br>
+                <label for="addEventTime">Time:</label>
+                <input type="time" id="addEventTime" required><br><br>
+                <label for="addEventLocation">Location:</label>
+                <input type="text" id="addEventLocation" required><br><br>
+                <label for="addEventDescription">Description:</label>
+                <textarea id="addEventDescription" required></textarea><br><br>
+                <label for="addEventClub">Club:</label>
+                <select id="addEventClub" required>
+                    <option value="">Select a club</option>
+                </select><br><br>
+                <button type="submit">Add Event</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const userResponse = await fetch('/api/user');
+                if (!userResponse.ok) {
+                    throw new Error('Failed to fetch user data');
+                }
+                const userData = await userResponse.json();
+                document.getElementById('username').innerText = userData.userName;
+                document.getElementById('greeting').innerText = `Hello, ${userData.userName}`;
+                document.getElementById('user-photo').src = userData.photo || 'path/to/default-avatar.png';
+
+                const clubsResponse = await fetch('/api/clubs');
+                if (!clubsResponse.ok) {
+                    throw new Error('Failed to fetch club details');
+                }
+                const clubsData = await clubsResponse.json();
+                const clubsContainer = document.getElementById('club-cards');
+                clubsData.forEach(club => {
+                    const card = document.createElement('div');
+                    card.classList.add('club-card');
+                    card.setAttribute('data-club-id', club._id);
+                    card.innerHTML = `
+                    <div class="club-details">
+                        <img src="${club.photo}" alt="${club.clubName}" class="club-image">
+                        <h2>${club.clubName}</h2>
+                        <p><strong>Description:</strong> ${club.description}</p>
+                        <p><strong>Category:</strong> ${club.category}</p>
+                        <p><strong>Members:</strong> ${club.memberCount}</p>
+                        <button class="edit-club-btn">Edit Club</button>
+                    </div>
+                `;
+                    clubsContainer.appendChild(card);
+                });
+
+                console.log('Clubs fetched successfully');
+
+                const reviewsResponse = await fetch('/api/reviews');
+                const reviewsStatus = reviewsResponse.status;
+                const reviewsText = await reviewsResponse.text();
+                console.log('Reviews response status:', reviewsStatus);
+                console.log('Reviews response:', reviewsText);
+
+                if (!reviewsResponse.ok) {
+                    throw new Error(`Failed to fetch reviews: ${reviewsStatus} ${reviewsText}`);
+                }
+
+                const reviewsData = JSON.parse(reviewsText);
+                const reviewsContainer = document.querySelector('.reviews');
+                reviewsData.forEach(review => {
+                    const reviewElement = document.createElement('div');
+                    reviewElement.classList.add('review');
+                    reviewElement.innerHTML = `
+                    <p><strong>Club: ${review.clubName}</strong></p> <!-- Display club name -->
+                    <p><strong>Username: ${review.username}</strong></p>
+                    <p><strong>Rating: ${review.rating}/10</strong></p>
+                    <p>${review.textReview}</p>
+                `;
+                    reviewsContainer.appendChild(reviewElement);
+                });
+
+                console.log('Reviews fetched successfully');
+
+            } catch (error) {
+                console.error('Fetch error', error);
+                alert('An error occurred: ' + error.message); // Added for debugging
+                window.location.href = '/signInPage';
+            }
+        });
+
+        document.addEventListener('click', async (event) => {
+            if (event.target.classList.contains('edit-club-btn')) {
+                const clubCard = event.target.closest('.club-card');
+                const clubId = clubCard.getAttribute('data-club-id');
+
+                try {
+                    const clubResponse = await fetch(`/api/clubs/${clubId}`);
+                    if (!clubResponse.ok) {
+                        throw new Error('Failed to fetch club details');
+                    }
+                    const clubData = await clubResponse.json();
+                    document.getElementById('clubId').value = clubData._id;
+                    document.getElementById('clubName').value = clubData.clubName;
+                    document.getElementById('description').value = clubData.description;
+                    document.getElementById('category').value = clubData.category;
+
+                    const memberList = document.getElementById('memberList');
+                    memberList.innerHTML = ''; // Clear previous members
+                    clubData.members.forEach(member => {
+                        const listItem = document.createElement('li');
+                        listItem.innerText = member.userName; // Assuming member userName is stored in 'userName'
+                        memberList.appendChild(listItem);
+                    });
+
+                    const editClubModal = document.getElementById('editClubModal');
+                    editClubModal.style.display = 'block';
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const editClubModal = document.getElementById('editClubModal');
+            const closeButton = document.querySelector('#editClubModal .close-button');
+            const editClubForm = document.getElementById('editClubForm');
+
+            closeButton.addEventListener('click', () => {
+                editClubModal.style.display = 'none';
+            });
+
+            window.addEventListener('click', (event) => {
+                if (event.target === editClubModal) {
+                    editClubModal.style.display = 'none';
+                }
+            });
+
+            editClubForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const clubId = document.getElementById('clubId').value;
+                const clubName = document.getElementById('clubName').value;
+                const description = document.getElementById('description').value;
+                const category = document.getElementById('category').value;
+
+                try {
+                    const response = await fetch(`/api/clubs/${clubId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ clubName, description, category })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to update club details');
+                    }
+
+                    const updatedClub = await response.json();
+                    // Update the UI with the new club details
+                    const clubCard = document.querySelector(`.club-card[data-club-id="${clubId}"]`);
+                    clubCard.querySelector('h2').innerText = updatedClub.clubName;
+                    clubCard.querySelector('p:nth-of-type(1)').innerText = `Description: ${updatedClub.description}`;
+                    clubCard.querySelector('p:nth-of-type(2)').innerText = `Category: ${updatedClub.category}`;
+                    clubCard.querySelector('p:nth-of-type(3)').innerText = `Members: ${updatedClub.memberCount}`;
+                    clubCard.querySelector('.club-image').src = updatedClub.photo;
+
+                    editClubModal.style.display = 'none';
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const eventsResponse = await fetch('/api/events');
+                const events = await eventsResponse.json();
+                const clubsResponse = await fetch('/api/clubs');
+                const clubs = await clubsResponse.json();
+
+                const adminEventCardsContainer = document.getElementById('admin-event-cards');
+
+                events.forEach(event => {
+                    const club = clubs.find(club => club.clubID === event.clubID);
+                    const card = document.createElement('div');
+                    card.classList.add('event-card');
+                    card.setAttribute('data-event-id', event.eventID);
+                    card.innerHTML = `
+            <div class="event-details">
+                <h2>${event.eventName}</h2>
+                <p><strong>Date:</strong> ${event.date}</p>
+                <p><strong>Time:</strong> ${event.time}</p>
+                <p><strong>Location:</strong> ${event.location}</p>
+                <p>${event.eventDescription}</p>
+                <p><strong>Club:</strong> ${club ? club.clubName : 'Unknown'}</p>
+            </div>
+            <div class="event-actions">
+                <button class="edit-event-btn">Edit Event</button>
+                <button class="delete-event-btn">Delete Event</button>
+            </div>
+        `;
+                    adminEventCardsContainer.appendChild(card);
+                });
+
+                // Event listeners for edit and delete buttons
+                document.querySelectorAll('.edit-event-btn').forEach(button => {
+                    button.addEventListener('click', async (e) => {
+                        const eventId = e.target.closest('.event-card').dataset.eventId;
+
+                        try {
+                            const eventResponse = await fetch(`/api/events/${eventId}`);
+                            if (!eventResponse.ok) throw new Error('Failed to fetch event details');
+
+                            const eventData = await eventResponse.json();
+                            document.getElementById('eventId').value = eventData.eventID;
+                            document.getElementById('eventName').value = eventData.eventName;
+                            document.getElementById('eventDate').value = eventData.date;
+                            document.getElementById('eventTime').value = eventData.time;
+                            document.getElementById('eventLocation').value = eventData.location;
+                            document.getElementById('eventDescription').value = eventData.eventDescription;
+
+                            document.getElementById('editEventModal').style.display = 'block';
+                        } catch (error) {
+                            console.error('Error:', error);
+                        }
+                    });
+                });
+
+                document.querySelectorAll('.delete-event-btn').forEach(button => {
+                    button.addEventListener('click', async (e) => {
+                        const eventId = e.target.closest('.event-card').dataset.eventId;
+
+                        if (confirm('Are you sure you want to delete this event?')) {
+                            try {
+                                const response = await fetch(`/api/events/${eventId}`, {
+                                    method: 'DELETE'
+                                });
+
+                                if (!response.ok) throw new Error('Failed to delete event');
+
+                                e.target.closest('.event-card').remove();
+                                alert('Event deleted successfully');
+                            } catch (error) {
+                                console.error('Error:', error);
+                            }
+                        }
+                    });
+                });
+
+                // Add clubs to add event form select options
+                const addEventClubSelect = document.getElementById('addEventClub');
+                clubs.forEach(club => {
+                    const option = document.createElement('option');
+                    option.value = club.clubID;
+                    option.innerText = club.clubName;
+                    addEventClubSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const editEventModal = document.getElementById('editEventModal');
+            const addEventModal = document.getElementById('addEventModal');
+            const closeButtons = document.querySelectorAll('.close-button');
+            const editEventForm = document.getElementById('editEventForm');
+            const addEventForm = document.getElementById('addEventForm');
+            const addEventButton = document.querySelector('.add-event-button');
+
+            closeButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    editEventModal.style.display = 'none';
+                    addEventModal.style.display = 'none';
+                });
+            });
+
+            window.addEventListener('click', (event) => {
+                if (event.target === editEventModal || event.target === addEventModal) {
+                    editEventModal.style.display = 'none';
+                    addEventModal.style.display = 'none';
+                }
+            });
+
+            addEventButton.addEventListener('click', () => {
+                addEventModal.style.display = 'block';
+            });
+
+            editEventForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const eventId = document.getElementById('eventId').value;
+                const updatedEvent = {
+                    eventName: document.getElementById('eventName').value,
+                    date: document.getElementById('eventDate').value,
+                    time: document.getElementById('eventTime').value,
+                    location: document.getElementById('eventLocation').value,
+                    eventDescription: document.getElementById('eventDescription').value,
+                };
+
+                try {
+                    const response = await fetch(`/api/events/${eventId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(updatedEvent),
+                    });
+
+                    if (!response.ok) throw new Error('Failed to update event');
+
+                    alert('Event updated successfully');
+                    editEventModal.style.display = 'none';
+                    location.reload();
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            });
+
+            addEventForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const newEvent = {
+                    eventID: Date.now(), // This can be an auto-generated ID or handle it as needed
+                    eventName: document.getElementById('addEventName').value,
+                    date: document.getElementById('addEventDate').value,
+                    time: document.getElementById('addEventTime').value,
+                    location: document.getElementById('addEventLocation').value,
+                    eventDescription: document.getElementById('addEventDescription').value,
+                    clubID: parseInt(document.getElementById('addEventClub').value),
+                };
+
+                try {
+                    const response = await fetch('/api/events', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(newEvent),
+                    });
+
+                    if (!response.ok) throw new Error('Failed to add event');
+
+                    alert('Event added successfully');
+                    addEventModal.style.display = 'none';
+                    location.reload();
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            });
+        });
+
+
+    </script>
 </body>
+
 </html>
