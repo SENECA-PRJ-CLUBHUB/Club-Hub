@@ -118,7 +118,6 @@
             position: relative;
             overflow: hidden;
             width: 80%;
-            /* Change from 200% to 100% to fit more cards */
             max-width: 90%;
             margin: 0 auto;
         }
@@ -137,7 +136,6 @@
             border-radius: 5px;
             background-color: #f9f9f9;
             position: relative;
-            
             min-height: 145px;
             width: 430px;
         }
@@ -149,7 +147,6 @@
         h2 {
             margin: 2px;
         }
-        
 
         .prev,
         .next {
@@ -208,7 +205,6 @@
             font-weight: bold;
         }
 
-
         .content {
             flex: 1;
             overflow-y: auto;
@@ -236,6 +232,60 @@
             position: fixed;
             right: 5%;
             top: 600px;
+        }
+
+        .club-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .club-card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin: 10px;
+            padding: 20px;
+            width: calc(100% / 3 - 40px);
+            transition: transform 0.2s;
+            text-align: center;
+        }
+
+        .club-card:hover {
+            transform: scale(1.05);
+        }
+
+        .club-card img {
+            width: 130px;
+            height: 130px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .club-card h3 {
+            font-size: 24px;
+            margin: 10px 0;
+        }
+
+        .club-card p {
+            font-size: 16px;
+            color: #666;
+        }
+
+        .details-btn {
+            font-size: 18px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .details-btn:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
@@ -267,8 +317,6 @@
         <h1 class="masthead-heading">Maple Leaf High School</h1>
     </header>
 
-    <!-- Add Student's Clubs Here-->
-
     <div class="content">
         <div class="center-container">
             <div class="carousel-container">
@@ -281,13 +329,15 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Add Student's Clubs Here-->
+        <div class="club-list" id="club-list"></div>
     </div>
 
     <footer class="footer">
         <p>Stay tuned for future updates, till then, you can contact us on:</p>
         <ul class="social">
-            <li><a class="css-is-deranged" href="mailto:ngshah3@myseneca.ca"
-                    style="color: #ca0707;">ngshah3@myseneca.ca</a></li>
+            <li><a class="css-is-deranged" href="mailto:ngshah3@myseneca.ca" style="color: #ca0707;">ngshah3@myseneca.ca</a></li>
         </ul>
     </footer>
 
@@ -307,7 +357,7 @@
                     card.innerHTML = `
                 <div class="event-details">
                     <h2>${event.eventName}</h2>
-                                        <p><strong>Date:</strong> ${event.date}</p>
+                    <p><strong>Date:</strong> ${event.date}</p>
                     <p><strong>Time:</strong> ${event.time}</p>
                     <p><strong>Location:</strong> ${event.location}</p>
                     <p>${event.eventDescription}</p>
@@ -324,13 +374,35 @@
                 console.error('Error fetching events or clubs:', error);
             }
 
-            const userResponse = await fetch('/api/user');
-            const userData = await userResponse.json();
-            document.getElementById('user-photo').src = userData.photo;
-            document.getElementById('user-name').textContent = userData.userName;
+           try {
+                const userResponse = await fetch('/api/user');
+                const userData = await userResponse.json();
+                document.getElementById('user-photo').src = userData.photo;
+                document.getElementById('user-name').textContent = userData.userName;
+
+                // Fetch the user's clubs and display them
+                const userClubsResponse = await fetch(`/api/students/${userData.userName}/clubs`);
+                const userClubs = await userClubsResponse.json();
+                const clubListContainer = document.getElementById('club-list');
+
+                userClubs.forEach(club => {
+                    const clubCard = document.createElement('div');
+                    clubCard.classList.add('club-card');
+                    clubCard.innerHTML = `
+                        <img src="${club.photo}" alt="${club.clubName}">
+                        <h3>${club.clubName}</h3>
+                        <p><strong>Category:</strong> ${club.category}</p>
+                        <p>${club.description}</p>
+                        <button class="details-btn" onclick="redirectToClubDetails('${club._id}')">Details</button>
+                    `;
+                    clubListContainer.appendChild(clubCard);
+                });
+            } catch (error) {
+                console.error('Error fetching user or user clubs:', error);
+            }
         });
 
-        function scrollCarousel(direction) {
+         function scrollCarousel(direction) {
             const container = document.getElementById('event-cards');
             const cardWidth = container.querySelector('.event-card').offsetWidth;
             const cardsPerRow = 3;
@@ -341,11 +413,14 @@
             });
         }
 
-
         function addToCalendar(eventName, eventDate, eventTime, eventLocation, eventDescription) {
             const formattedDate = eventDate.replace(/-/g, '') + 'T' + eventTime.replace(/:/g, '') + 'Z';
             const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(eventName)}&dates=${formattedDate}/${formattedDate}&details=${encodeURIComponent(eventDescription)}&location=${encodeURIComponent(eventLocation)}`;
             window.open(googleCalendarUrl, '_blank');
+        }
+
+        function redirectToClubDetails(id) {
+            window.location.href = `/clubDetails?id=${id}`;
         }
     </script>
 </body>

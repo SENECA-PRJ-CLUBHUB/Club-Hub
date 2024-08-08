@@ -27,9 +27,13 @@ const userSchema = new Schema({
   ],
   id: {
     type: Number,
-    default: 1, 
+    default: 1,
     required: true,
   },
+  clubs: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Club'
+  }]
 });
 
 const User = mongoose.model("User", userSchema);

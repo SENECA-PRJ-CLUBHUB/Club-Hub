@@ -77,54 +77,142 @@
             border-radius: 10px;
         }
 
-        .search-bar input,
+        .search-bar {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .search-bar input[type="text"] {
+            width: calc(100% - 40px);
+            padding: 10px 15px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fff;
+            outline: none;
+            box-shadow: none;
+        }
+
+        .search-bar input[type="text"]:focus {
+            border-color: #007bff;
+        }
+
+        .search-bar .search-icon {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            background-image: url('/img/magnifying_glass.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+            cursor: pointer;
+        }
+
         .sort-dropdown select {
             padding: 10px;
-            font-size: 16px;
+            font-size: 18px;
             border: 1px solid #ddd;
             border-radius: 5px;
         }
 
-        .clubs-container {
+        .events-container {
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            flex-wrap: wrap;
+            justify-content: space-around;
             margin: 20px;
         }
 
-        .club-card {
-            display: flex;
-            align-items: center;
+        .event-card {
             background-color: white;
             border-radius: 10px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            margin: 10px 0;
+            margin: 10px;
             padding: 20px;
-            width: 80%;
-            max-width: 800px;
+            width: calc(50% - 40px);
             transition: transform 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .club-card:hover {
+        .event-card:hover {
             transform: scale(1.05);
         }
 
-        .club-card img {
-            width: 100px;
-            height: 100px;
-            border-radius: 10px;
-            margin-right: 20px;
+        .event-info {
+            flex: 1;
         }
 
-        .club-card h3 {
-            margin: 0;
-            font-size: 24px;
+        .event-info h3 {
+            margin-top: 0;
+            font-size: 26px;
             color: #333;
         }
 
-        .club-card p {
+        .event-info strong {
+            margin-right: 10px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .event-info p {
             margin: 5px 0;
             color: #666;
+            font-size: 20px;
+        }
+
+        .add-to-calendar {
+            background-color: #4285f4;
+            color: #fff;
+            padding: 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 50px;
+            font-size: 18px;
+        }
+
+        .add-to-calendar:hover {
+            transform: scale(1.2);
+        }
+
+        .add-to-calendar-text {
+            position: absolute;
+            bottom: -30px;
+            right: 50%;
+            background-color: #555;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 22px;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.2s ease, bottom 0.2s ease;
+            transform: translateX(50%);
+        }
+
+
+        .add-to-calendar:hover .add-to-calendar-text {
+            opacity: 1;
+            bottom: -40px;
+        }
+
+        @media (max-width: 768px) {
+            .event-card {
+                width: 100%;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .add-to-calendar {
+                margin-top: 10px;
+            }
         }
     </style>
 </head>
@@ -134,8 +222,8 @@
         <div class="left">
             <ul>
                 <li><a href="/studentHome">Student Home</a></li>
-                <li class="active"><a href="/#">Events</a></li>
-                <li><a href="clubs">Clubs</a></li>
+                <li class="active"><a href="#">Events</a></li>
+                <li><a href="/clubs">Clubs</a></li>
             </ul>
         </div>
         <div class="right">
@@ -143,7 +231,103 @@
         </div>
     </div>
 
- 
+    <div class="search-sort-container">
+        <div class="search-bar">
+            <input type="text" id="eventSearch" onkeyup="searchEvents()" placeholder="Search for Events..">
+        </div>
+        <div class="sort-dropdown">
+            <label for="sortEvents">Sort by Club: </label>
+            <select id="sortEvents" onchange="sortEvents()">
+                <!-- Options will be populated dynamically -->
+            </select>
+        </div>
+    </div>
+
+    <div id="events-container" class="events-container"></div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            console.log("DOMContentLoaded event fired");
+            fetchEvents();
+            populateClubOptions();
+        });
+
+        async function fetchEvents() {
+            const search = document.getElementById("eventSearch").value;
+            const sort = document.getElementById("sortEvents").value;
+            console.log("Fetching events with search:", search, "and sort:", sort);
+            const response = await fetch(`/api/events?search=${search}&club=${sort}`);
+            if (response.ok) {
+                const events = await response.json();
+                console.log("Fetched events:", events);
+                const clubsResponse = await fetch("/api/clubs");
+                const clubs = await clubsResponse.json();
+                displayEvents(events, clubs);
+            } else {
+                console.error("Failed to fetch events");
+            }
+        }
+
+        function displayEvents(events, clubs) {
+            const container = document.getElementById("events-container");
+            container.innerHTML = "";
+            events.forEach(event => {
+                const club = clubs.find(club => club.clubID === event.clubID);
+                const eventCard = document.createElement("div");
+                eventCard.classList.add("event-card");
+                eventCard.innerHTML = `
+                    <div class="event-info">
+                        <h3>${event.eventName}</h3>
+                        <p><strong>Date:</strong> ${event.date}</p>
+                        <p><strong>Time:</strong> ${event.time}</p>
+                        <p><strong>Location:</strong> ${event.location}</p>
+                        <p>${event.eventDescription}</p>
+                        <p><strong>Club:</strong> ${club ? club.clubName : 'Unknown'}</p>
+                    </div>
+                    <div class="add-to-calendar" onclick="addToCalendar('${event.eventName}', '${event.date}', '${event.time}', '${event.location}', '${event.eventDescription}')">
+                        Add to Calendar
+                        <div class="add-to-calendar-text">Click to add to Google Calendar</div>
+                    </div>
+                `;
+                container.appendChild(eventCard);
+            });
+            console.log("Events displayed:", events);
+        }
+
+        async function populateClubOptions() {
+            const response = await fetch("/api/clubs");
+            if (response.ok) {
+                const clubs = await response.json();
+                const sortDropdown = document.getElementById("sortEvents");
+                sortDropdown.innerHTML = '<option value="">All Clubs</option>';
+                clubs.forEach(club => {
+                    const option = document.createElement("option");
+                    option.value = club.clubID;
+                    option.text = club.clubName;
+                    sortDropdown.appendChild(option);
+                });
+                console.log("Club options populated:", clubs);
+            } else {
+                console.error("Failed to fetch clubs");
+            }
+        }
+
+        function searchEvents() {
+            console.log("Search triggered");
+            fetchEvents();
+        }
+
+        function sortEvents() {
+            console.log("Sort triggered");
+            fetchEvents();
+        }
+
+        function addToCalendar(eventName, eventDate, eventTime, eventLocation, eventDescription) {
+            const formattedDate = eventDate.replace(/-/g, '') + 'T' + eventTime.replace(/:/g, '') + 'Z';
+            const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(eventName)}&dates=${formattedDate}/${formattedDate}&details=${encodeURIComponent(eventDescription)}&location=${encodeURIComponent(eventLocation)}`;
+            window.open(googleCalendarUrl, '_blank');
+        }
+    </script>
 
     <footer class="content-footer">
         <p>Stay tuned for future updates, till then, you can contact us at:</p>

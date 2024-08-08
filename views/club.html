@@ -253,7 +253,7 @@
                             <p><strong>Category:</strong> ${club.category}</p>
                             <p>${club.description}</p>
                         </div>
-                        <button class="details-btn" onclick="redirectToClubDetails(${club._id})">Details</button>
+                        <button class="details-btn" onclick="redirectToClubDetails('${club._id}')">Details</button>
                     </div>
                 `;
                 container.appendChild(clubCard);
@@ -261,7 +261,7 @@
         }
 
         function redirectToClubDetails(id) {
-            window.location.href = `/clubdetails.html?id=${id}`;
+            window.location.href = `/clubDetails?id=${id}`;
         }
 
         function searchClubs() {
@@ -273,12 +273,6 @@
         }
     </script>
 
-    </br>
-    </br>
-    </br>
-    </br>
-    </br>
-    </br>
     <footer class="content-footer">
         <p>Stay tuned for future updates, till then, you can contact us at:</p>
         <ul class="social">

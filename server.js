@@ -28,11 +28,19 @@ mongoose.connect(MONGO_URL)
     process.exit(1);
   });
 
+const reviewSchema = new mongoose.Schema({
+  reviewerName: { type: String, required: true },
+  rating: { type: Number, required: true },
+  reviewText: { type: String, required: true },
+  clubName: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now }
+});
+
 const User = require("./models/user");
 const Event = require("./models/event");
 const Club = require("./models/club");
-const Student = require("./models/students");
-const Review = require("./models/reviews"); // Import your Review model
+const Review = mongoose.model('Review', reviewSchema);
+module.exports = Review;
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
@@ -70,12 +78,12 @@ app.get("/registerPage", (req, res) => {
   res.sendFile(path.join(__dirname, "/views/registerPage.html"));
 });
 
-app.get("/clubdetails", (req, res) => {
-  res.sendFile(path.join(__dirname, "/views/club-details.html"));
+app.get("/clubDetails", (req, res) => {
+  res.sendFile(path.join(__dirname, "/views/clubDetails.html"));
 });
 
-// File upload setup
-const storage = multer.diskStorage({
+// File upload setup for user photos
+const userStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "public/uploads/");
   },
@@ -83,16 +91,24 @@ const storage = multer.diskStorage({
     cb(null, Date.now() + path.extname(file.originalname));
   },
 });
-const upload = multer({ storage: storage });
 
-app.post("/registerPage", upload.single("photo"), async (req, res) => {
+const uploadUser = multer({ storage: userStorage });
+
+// File upload setup for club photos
+const clubStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "public/clubs/");
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
+
+const uploadClub = multer({ storage: clubStorage });
+
+// Register page route with user photo upload
+app.post("/registerPage", uploadUser.single("photo"), async (req, res) => {
   const { userName, password, password2 } = req.body;
-
-  console.log("Form Data:", req.body);
-
-  if (req.file) {
-    console.log("File Uploaded:", req.file);
-  }
 
   if (!userName || !password || !password2) {
     return res.status(400).send("All fields are required!");
@@ -138,8 +154,6 @@ app.post("/registerPage", upload.single("photo"), async (req, res) => {
 app.post("/studentSignIn", async (req, res) => {
   const { name, password } = req.body;
 
-  console.log("Form Data:", req.body);
-
   try {
     const user = await User.findOne({ userName: name });
     if (!user || user.id !== 1) {
@@ -161,8 +175,6 @@ app.post("/studentSignIn", async (req, res) => {
 app.post("/adminSignIn", async (req, res) => {
   const { name, password } = req.body;
 
-  console.log("Form Data:", req.body);
-
   try {
     const user = await User.findOne({ userName: name });
     if (!user || user.id !== 2) {
@@ -183,7 +195,25 @@ app.post("/adminSignIn", async (req, res) => {
 
 app.get("/api/events", async (req, res) => {
   try {
-    const events = await Event.find();
+    const search = req.query.search || '';
+    const clubFilter = req.query.club || '';
+    console.log('API called with search:', search, 'and club:', clubFilter);
+
+    let events = await Event.find().lean();
+
+    if (clubFilter && clubFilter !== '') {
+      events = events.filter(event => event.clubID === parseInt(clubFilter));
+    }
+
+    if (search) {
+      events = events.filter(event => event.eventName.toLowerCase().includes(search.toLowerCase()));
+    }
+
+    for (let event of events) {
+      const club = await Club.findOne({ clubID: event.clubID });
+      event.clubName = club ? club.clubName : 'Unknown';
+    }
+
     res.json(events);
   } catch (error) {
     console.error("Error fetching events:", error);
@@ -247,6 +277,20 @@ app.get("/adminHome", (req, res) => {
   res.sendFile(path.join(__dirname, "/views/adminHome.html"));
 });
 
+app.get('/api/students/:userName/clubs', async (req, res) => {
+  try {
+    const userName = req.params.userName;
+    const user = await User.findOne({ userName }).populate('clubs');
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
+    res.json(user.clubs);
+  } catch (error) {
+    console.error('Error fetching user clubs:', error);
+    res.status(500).send('Error fetching user clubs');
+  }
+});
+
 // Fetch club details by ID with members' usernames
 app.get("/api/clubs/:id", async (req, res) => {
   try {
@@ -261,6 +305,120 @@ app.get("/api/clubs/:id", async (req, res) => {
   } catch (error) {
     console.error("Error fetching club details:", error);
     res.status(500).send("Error fetching club details");
+  }
+});
+
+// Fetch upcoming events for a specific club
+app.get("/api/clubs/:id/events", async (req, res) => {
+  try {
+    const clubId = req.params.id;
+    const events = await Event.find({ clubID: clubId });
+    res.json(events);
+  } catch (error) {
+    console.error("Error fetching club events:", error);
+    res.status(500).send("Error fetching club events");
+  }
+});
+
+// Fetch events based on club name
+app.get("/api/events/byClub/:clubName", async (req, res) => {
+  try {
+    const clubName = req.params.clubName;
+    const club = await Club.findOne({ clubName });
+    if (!club) {
+      return res.status(404).send("Club not found");
+    }
+    const events = await Event.find({ clubID: club.clubID });
+    res.json(events);
+  } catch (error) {
+    console.error("Error fetching events by club:", error);
+    res.status(500).send("Error fetching events by club");
+  }
+});
+
+// Join a club
+app.post("/api/clubs/:id/join", async (req, res) => {
+  if (!req.session.user) {
+    return res.status(401).send("Unauthorized");
+  }
+
+  try {
+    const clubId = req.params.id;
+    const user = await User.findById(req.session.user._id);
+
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+
+    const club = await Club.findById(clubId);
+    if (!club) {
+      return res.status(404).send("Club not found");
+    }
+
+    // Ensure club members is an array
+    if (!club.members) {
+      club.members = [];
+    }
+
+    if (club.members.includes(user._id)) {
+      return res.status(400).send("User already a member of the club");
+    }
+
+    club.members.push(user._id);
+    user.clubs.push(club._id);
+
+    await club.save();
+    await user.save();
+
+    res.send("Joined the club successfully");
+  } catch (error) {
+    console.error("Error joining club:", error);
+    res.status(500).send("Error joining club");
+  }
+});
+
+// Leave a club
+app.post("/api/clubs/:id/leave", async (req, res) => {
+  if (!req.session.user) {
+    return res.status(401).send("Unauthorized");
+  }
+
+  try {
+    const clubId = req.params.id;
+    const user = await User.findById(req.session.user._id);
+
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+
+    const club = await Club.findById(clubId);
+    if (!club) {
+      return res.status(404).send("Club not found");
+    }
+
+    // Ensure club members is an array
+    if (!club.members) {
+      club.members = [];
+    }
+
+    const memberIndex = club.members.indexOf(user._id);
+    if (memberIndex === -1) {
+      return res.status(400).send("User is not a member of the club");
+    }
+
+    club.members.splice(memberIndex, 1);
+    const clubIndex = user.clubs.indexOf(club._id);
+    if (clubIndex !== -1) {
+      user.clubs.splice(clubIndex, 1);
+    }
+
+    await club.save();
+    await user.save();
+
+    res.send("Left the club successfully");
+  } catch (error) {
+    console.error("Error leaving club:", error);
+    res.status(500).send("Error leaving club");
   }
 });
 
@@ -280,8 +438,7 @@ app.put("/api/clubs/:id", async (req, res) => {
       { new: true }
     );
 
-    const memberCount = await Student.countDocuments({ club: club._id });
-    res.json({ ...club.toObject(), memberCount });
+    res.json(club);
   } catch (error) {
     console.error("Error updating club details:", error);
     res.status(500).send("Error updating club details");
@@ -389,6 +546,170 @@ app.post("/api/events", async (req, res) => {
     res.status(500).send("Error adding event");
   }
 });
+
+// Add club route with club photo upload
+app.post("/api/clubs", uploadClub.single('photo'), async (req, res) => {
+  if (!req.session.user || req.session.user.id !== 2) {  // Ensure only admin can add a club
+    return res.status(403).send("Forbidden: Only admin can add a club.");
+  }
+
+  const { clubID, clubName, description, category } = req.body;
+  const photo = req.file ? `/clubs/${req.file.filename}` : '/path/to/default-photo.png';  // Ensure the correct path
+
+  console.log('Request Body:', req.body);  // Log the request body for debugging
+  console.log('File:', req.file);  // Log the file for debugging
+
+  if (!clubID || !clubName || !description || !category) {
+    return res.status(400).send("Error: All fields are required.");
+  }
+
+  // Validate length of fields (adjust as necessary)
+  if (clubName.length < 3) {
+    return res.status(400).send("Error: Club name must be at least 3 characters long.");
+  }
+  if (description.length < 10) {
+    return res.status(400).send("Error: Description must be at least 10 characters long.");
+  }
+  if (category.length < 3) {
+    return res.status(400).send("Error: Category must be at least 3 characters long.");
+  }
+
+  try {
+    const existingClub = await Club.findOne({ clubID });
+    if (existingClub) {
+      return res.status(400).send("Error: Club ID must be unique.");
+    }
+
+    const newClub = new Club({
+      clubID,
+      clubName,
+      description,
+      category,
+      photo,
+      members: [],  // Initialize with no members
+    });
+
+    await newClub.save();
+    console.log("Club added successfully:", newClub);  // Log the saved club
+    res.status(201).send("Club added successfully.");
+  } catch (error) {
+    console.error("Error adding club:", error);
+    res.status(500).send("Error adding club.");
+  }
+});
+
+app.post("/registerPage", uploadUser.single("photo"), async (req, res) => {
+  const { userName, password, password2 } = req.body;
+
+  if (!userName || !password || !password2) {
+    return res.status(400).send("All fields are required!");
+  }
+
+  if (password !== password2) {
+    return res.status(400).send("Passwords do not match!");
+  }
+
+  try {
+    const existingUser = await User.findOne({ userName });
+    if (existingUser) {
+      if (existingUser.password) {
+        return res.status(400).send("User already exists!");
+      }
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+      existingUser.password = hashedPassword;
+      existingUser.photo = req.file ? `/uploads/${req.file.filename}` : null;
+
+      await existingUser.save();
+      return res.redirect("/signInPage");
+    } else {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const newUser = new User({
+        userName,
+        password: hashedPassword,
+        photo: req.file ? `/uploads/${req.file.filename}` : null,
+        id: "1",  // Ensure this matches the new schema structure
+        clubs: [],  // Initialize as an empty array
+        createdAt: new Date(),  // Ensure createdAt is set to current date/time
+      });
+
+      await newUser.save();
+      return res.redirect("/signInPage");
+    }
+  } catch (error) {
+    console.error("Error registering user:", error);
+    res.status(500).send("Error registering user!");
+  }
+});
+
+app.post("/api/clubs/:clubID/reviews", async (req, res) => {
+  const { rating, comment } = req.body;
+  const clubID = req.params.clubID;
+
+  // Check if the user is authenticated
+  if (!req.session.user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  const userName = req.session.user.userName;
+
+  // Validate required fields
+  if (!rating || !comment) {
+    return res.status(400).json({ message: "Rating and comment are required" });
+  }
+
+  try {
+    const club = await Club.findOne({ clubID });
+
+    if (!club) {
+      return res.status(404).json({ message: "Club not found" });
+    }
+
+    const newReview = new Review({
+      reviewerName: userName,
+      rating: rating,
+      reviewText: comment,
+      createdAt: new Date(),
+    });
+
+    await newReview.save();
+    res.status(201).json({ message: "Review added successfully" });
+  } catch (error) {
+    console.error("Error adding review:", error);
+    res.status(500).json({ message: "Error adding review" });
+  }
+});
+
+app.post('/api/reviews', async (req, res) => {
+  const { reviewerName, reviewText, rating, clubName } = req.body;
+
+  const newReview = new Review({
+    reviewerName,
+    reviewText,
+    rating,
+    clubName
+  });
+
+  try {
+    await newReview.save();
+    res.status(201).json(newReview);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+
+app.get('/api/reviews', async (req, res) => {
+  const { clubName } = req.query;
+  try {
+    const reviews = await Review.find({ clubName: clubName });
+    res.json(reviews);
+  } catch (error) {
+    console.error("Error fetching reviews:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 
 app.get("/signOut", (req, res) => {
   req.session.destroy(err => {

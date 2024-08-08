@@ -4,8 +4,9 @@ const Schema = mongoose.Schema;
 // Define the schema for reviews
 const reviewSchema = new Schema({
   reviewerName: String,
-  rating: Number,
+  rating: { type: Number, min: 0, max: 10 }, // Ensure rating is between 0 and 10
   reviewText: String,
+  clubName: String, // New field added to store the club's name
   createdAt: { type: Date, default: Date.now }
 });
 
