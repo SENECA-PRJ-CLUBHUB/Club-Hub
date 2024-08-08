@@ -59,11 +59,11 @@
 
         .club-details-container {
             width: 100%;
-            margin: 0;
+            margin: 0 auto;
             padding: 20px;
             background-color: #fff;
-            box-shadow: none;
-            border-radius: 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
             min-height: 100vh;
             box-sizing: border-box;
         }
@@ -75,34 +75,73 @@
         }
 
         .club-header img {
-            width: 170px;
-            height: 170px;
+            width: 150px;
+            height: 150px;
             border-radius: 10px;
             margin-right: 20px;
         }
 
         .club-header h2 {
-            font-size: 40px;
+            font-size: 32px;
             margin: 0;
         }
 
+        .club-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 100%; /* Optional, ensures full width of the parent container */
+}
+
+#club-photo {
+    margin-bottom: 10px; /* Adds space between the image and the name */
+}
+
+#club-name {
+    margin: 0; /* Removes default margin */
+    font-size: 50px;
+}
+
+
         .club-description {
             margin-bottom: 20px;
+            margin-left: 50px;
+            margin-right: 50px;
+        }
+
+        .club-description h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #007bff;
         }
 
         .club-description p {
-            font-size: 30px;
+            font-size: 28px;
             line-height: 1.6;
         }
 
         .event-list {
             margin-bottom: 20px;
+            margin-left: 50px;
+            margin-right: 50px;
         }
 
         .event-list h3 {
-            font-size: 28px;
-            margin-bottom: 10px;
-            text-align: center;
+            font-size: 24px;
+            color: #007bff;
+        }
+
+        .review-list {
+            margin-bottom: 20px;
+            margin-left: 50px;
+            margin-right: 50px;
+        }
+
+        .review-list h3 {
+            font-size: 24px;
+            color: #007bff;
         }
 
         .event-item {
@@ -128,13 +167,13 @@
 
         .club-actions {
             display: flex;
-            justify-content: space-between;
+            justify-content:center;
             margin-bottom: 20px;
         }
 
         .club-actions button {
             padding: 10px 20px;
-            font-size: 18px;
+            font-size: 16px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
@@ -144,6 +183,7 @@
         .join-btn {
             background-color: #007bff;
             color: #fff;
+            margin-right: 10px;
         }
 
         .join-btn:hover {
@@ -162,6 +202,7 @@
         .add-review-btn {
             background-color: #28a745;
             color: #fff;
+            justify-content:right;
         }
 
         .add-review-btn:hover {
@@ -178,6 +219,7 @@
         .event-cards {
             display: flex;
             width: 100%;
+            height: 190px;
             transition: transform 0.5s ease-in-out;
         }
 
@@ -190,6 +232,18 @@
             background-color: #f9f9f9;
             position: relative;
             min-height: 150px;
+            padding: 15px;
+        }
+
+        .event-card h2 {
+            font-size: 20px;
+            margin: 0;
+            color: #007bff;
+        }
+
+        .event-card p {
+            margin: 5px 0;
+            font-size: 14px;
         }
 
         .prev,
@@ -227,6 +281,7 @@
 
         .review-form-container h3 {
             margin-top: 0;
+            color: #007bff;
         }
 
         .review-form-container textarea {
@@ -250,7 +305,7 @@
 
         .review-form-container button {
             padding: 10px 20px;
-            font-size: 18px;
+            font-size: 16px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
@@ -267,24 +322,23 @@
             display: none;
             margin-top: 20px;
             color: #28a745;
-            font-size: 18px;
+            font-size: 16px;
         }
 
-         /* Style for the review cards */
-         .review-card {
-            font-size: 20px;
+        .review-card {
+            font-size: 18px;
             color: #333;
             padding: 10px;
             border-bottom: 1px solid #ddd;
         }
 
         .review-card strong {
-            font-size: 22px;
+            font-size: 20px;
             color: #007bff;
         }
 
         .review-card small {
-            font-size: 16px;
+            font-size: 14px;
             color: #999;
         }
 
@@ -309,20 +363,24 @@
             <img id="club-photo" src="" alt="Club Photo">
             <h2 id="club-name"></h2>
         </div>
-        <div class="club-description">
-            <p id="club-description"></p>
-        </div>
-        <div class="event-list">
-            <h3>Upcoming Events</h3>
-            <div class="carousel-container">
-                <div class="event-cards" id="event-cards"></div>
-                <button class="prev" onclick="scrollCarousel(-1)">&#10094;</button>
-                <button class="next" onclick="scrollCarousel(1)">&#10095;</button>
-            </div>
-        </div>
         <div class="club-actions">
             <button class="join-btn" onclick="joinClub()">Join Club</button>
             <button class="leave-btn" onclick="leaveClub()">Leave Club</button>
+        </div>
+        <div class="club-description">
+            <h3>Club Description</h3>
+            <p id="club-description"></p>
+        </div>
+        
+        <div class="event-list">
+            <h3 style="margin-bottom: -40px;">Upcoming Events</h3>
+            <div class="carousel-container">
+                <div class="event-cards" id="event-cards"></div>
+                <button class="prev" onclick="scrollCarousel(-1)" style="margin-top: 140px;">&#10094;</button>
+                <button class="next" onclick="scrollCarousel(1)" style="margin-top: 140px;">&#10095;</button>
+            </div>
+        </div>
+        <div class="club-actions" style="justify-content:left; margin-left: 290px; margin-bottom: -28px;">
             <button class="add-review-btn" onclick="toggleReviewForm()">Add Review</button>
         </div>
         <div class="review-form-container" id="review-form-container">
@@ -334,7 +392,10 @@
             <button onclick="postReview()">Post Review</button>
             <p id="success-message" class="success-message">Review posted successfully!</p>
         </div>
+        <div class="review-list">
+            <h3>Club Reviews</h3>
         <div id="reviews-container"></div>
+    </div>
     </div>
 
     <script>
@@ -498,7 +559,7 @@
                 const reviewElement = document.createElement('div');
                 reviewElement.classList.add('review-card');
                 reviewElement.innerHTML = `
-            <strong>${review.reviewerName}</strong> (Rating: ${review.rating}/10) - Club: ${review.clubName}: ${review.reviewText}
+            <strong  style="color: #444;">${review.reviewerName}</strong> (Rating: ${review.rating}/10) - Club: ${review.clubName}: ${review.reviewText}
             <br>
             <small>${new Date(review.createdAt).toLocaleString()}</small>
             <hr>

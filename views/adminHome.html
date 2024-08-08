@@ -63,6 +63,32 @@
             color: red;
         }
 
+        .navbar-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-right span {
+            color: rgb(255, 255, 255);
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .navbar-right .signout-btn {
+            text-decoration: none;
+            color: rgb(242, 6, 6);
+            font-weight: bold;
+            border: 2px solid rgb(242, 6, 6);
+            padding: 5px 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .navbar-right .signout-btn:hover {
+            background-color: rgb(242, 6, 6);
+            color: white;
+        }
+
         .main-content {
             overflow-y: auto;
             padding: 20px;
@@ -158,6 +184,21 @@
 
         .clubs .club-card p {
             margin: 5px 0;
+        }
+
+        #addClubButton {
+            margin-top: 5px;
+            padding: 8px 12px;
+            background-color: #4285f4;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #addClubButton:hover {
+            background-color: #357ae8;
         }
 
         .clubs .edit-club-btn {
@@ -394,8 +435,8 @@
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: rgb(0,0,0);
-            background-color: rgba(0,0,0,0.4);
+            background-color: rgb(0, 0, 0);
+            background-color: rgba(0, 0, 0, 0.4);
             padding-top: 60px;
         }
 
@@ -424,6 +465,7 @@
 </head>
 
 <body>
+
     <div class="header">
         <div class="navbar">
             <ul>
@@ -432,7 +474,7 @@
             </ul>
             <div class="navbar-right">
                 <span id="username">Admin User Name</span>
-                <button onclick="window.location.href='/signOut'">Sign Out</button>
+                <a href="/signOut" class="signout-btn">Sign Out</a>&nbsp;&nbsp;&nbsp;&nbsp;
             </div>
         </div>
     </div>
@@ -447,8 +489,7 @@
 
         <div class="clubs">
             <div class="clubs-header">
-                <h2>Club Details:</h2>
-                <button type="button" id="addClubButton">Add Club</button>
+                <h2>Club Details:</h2><button type="button" id="addClubButton">Add Club</button>
             </div>
             <div class="clubs-content">
                 <div id="club-cards"></div>
@@ -517,37 +558,37 @@
     </div>
 
     <!-- Add Club Modal -->
-<div id="addClubModal" class="modal">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <form id="addClubForm" enctype="multipart/form-data">
-            <label for="clubID">Club ID:</label>
-            <input type="number" id="clubID" name="clubID" required><br>
+    <div id="addClubModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <form id="addClubForm" enctype="multipart/form-data">
+                <label for="clubID">Club ID:</label>
+                <input type="number" id="clubID" name="clubID" required><br>
 
-            <label for="clubName">Club Name:</label>
-            <input type="text" id="clubName" name="clubName" required><br>
+                <label for="clubName">Club Name:</label>
+                <input type="text" id="clubName" name="clubName" required><br>
 
-            <label for="description">Description:</label>
-            <textarea id="description" name="description" required></textarea><br>
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" required></textarea><br>
 
-            <label for="category">Category:</label>
-            <input type="text" id="category" name="category" required><br>
+                <label for="category">Category:</label>
+                <input type="text" id="category" name="category" required><br>
 
-            <label for="photo">Photo:</label>
-            <input type="file" id="photo" name="photo"><br>
+                <label for="photo">Photo:</label>
+                <input type="file" id="photo" name="photo"><br>
 
-            <input type="submit" value="Add Club">
-        </form>
+                <input type="submit" value="Add Club">
+            </form>
+        </div>
     </div>
-</div>
 
-<!-- Success Message -->
-<div id="successMessage" style="display: none;">
-    Club added successfully!
-</div>
+    <!-- Success Message -->
+    <div id="successMessage" style="display: none;">
+        Club added successfully!
+    </div>
 
-<!-- Button to Open the Modal -->
-<button id="addClubButton">Add Club</button>
+    <!-- Button to Open the Modal -->
+    <button id="addClubButton">Add Club</button>
 
     <div id="addEventModal" class="modal">
         <div class="modal-content">
@@ -838,7 +879,7 @@
             });
 
             // Handle form submission
-            document.getElementById('addClubForm').onsubmit = async function(event) {
+            document.getElementById('addClubForm').onsubmit = async function (event) {
                 event.preventDefault();
 
                 const formData = new FormData(this);
@@ -863,7 +904,7 @@
                 }
             }
         });
-        
+
         document.addEventListener('DOMContentLoaded', () => {
             const editEventModal = document.getElementById('editEventModal');
             const addEventModal = document.getElementById('addEventModal');
