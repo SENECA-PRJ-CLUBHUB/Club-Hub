@@ -111,18 +111,18 @@ app.post("/registerPage", uploadUser.single("photo"), async (req, res) => {
   const { userName, password, password2 } = req.body;
 
   if (!userName || !password || !password2) {
-    return res.status(400).send("All fields are required!");
+    return res.status(400).send("<script>alert('All fields are required!'); window.location.href='/registerPage';</script>");
   }
 
   if (password !== password2) {
-    return res.status(400).send("Passwords do not match!");
+    return res.status(400).send("<script>alert('Passwords do not match!'); window.location.href='/registerPage';</script>");
   }
 
   try {
     const existingUser = await User.findOne({ userName });
     if (existingUser) {
       if (existingUser.password) {
-        return res.status(400).send("User already exists!");
+        return res.status(400).send("<script>alert('User already exists!'); window.location.href='/registerPage';</script>");
       }
 
       const hashedPassword = await bcrypt.hash(password, 10);
@@ -147,7 +147,7 @@ app.post("/registerPage", uploadUser.single("photo"), async (req, res) => {
     }
   } catch (error) {
     console.error("Error registering user:", error);
-    res.status(500).send("Error registering user!");
+    res.status(500).send("<script>alert('Error registering user!'); window.location.href='/registerPage';</script>");
   }
 });
 
@@ -157,18 +157,18 @@ app.post("/studentSignIn", async (req, res) => {
   try {
     const user = await User.findOne({ userName: name });
     if (!user || user.id !== 1) {
-      return res.status(400).send("Username or password is incorrect!");
+      return res.status(400).send("<script>alert('Username or password is incorrect!'); window.location.href='/signInPage';</script>");
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).send("Username or password is incorrect!");
+      return res.status(400).send("<script>alert('Username or password is incorrect!'); window.location.href='/signInPage';</script>");
     }
 
     req.session.user = user;
     res.redirect("/studentHome");
   } catch (error) {
-    res.status(500).send("Error signing in!");
+    res.status(500).send("<script>alert('Error signing in!'); window.location.href='/signInPage';</script>");
   }
 });
 
@@ -178,18 +178,18 @@ app.post("/adminSignIn", async (req, res) => {
   try {
     const user = await User.findOne({ userName: name });
     if (!user || user.id !== 2) {
-      return res.status(400).send("Username or password is incorrect!");
+      return res.status(400).send("<script>alert('Username or password is incorrect!'); window.location.href='/signInPage';</script>");
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).send("Username or password is incorrect!");
+      return res.status(400).send("<script>alert('Username or password is incorrect!'); window.location.href='/signInPage';</script>");
     }
 
     req.session.user = user;
     res.redirect("/adminHome");
   } catch (error) {
-    res.status(500).send("Error signing in!");
+    res.status(500).send("<script>alert('Error signing in!'); window.location.href='/signInPage';</script>");
   }
 });
 
@@ -602,18 +602,18 @@ app.post("/registerPage", uploadUser.single("photo"), async (req, res) => {
   const { userName, password, password2 } = req.body;
 
   if (!userName || !password || !password2) {
-    return res.status(400).send("All fields are required!");
+    return res.status(400).send("<script>alert('All fields are required!'); window.location.href='/registerPage';</script>");
   }
 
   if (password !== password2) {
-    return res.status(400).send("Passwords do not match!");
+    return res.status(400).send("<script>alert('Passwords do not match!'); window.location.href='/registerPage';</script>");
   }
 
   try {
     const existingUser = await User.findOne({ userName });
     if (existingUser) {
       if (existingUser.password) {
-        return res.status(400).send("User already exists!");
+        return res.status(400).send("<script>alert('User already exists!'); window.location.href='/registerPage';</script>");
       }
 
       const hashedPassword = await bcrypt.hash(password, 10);
@@ -638,9 +638,10 @@ app.post("/registerPage", uploadUser.single("photo"), async (req, res) => {
     }
   } catch (error) {
     console.error("Error registering user:", error);
-    res.status(500).send("Error registering user!");
+    res.status(500).send("<script>alert('Error registering user!'); window.location.href='/registerPage';</script>");
   }
 });
+
 
 app.post("/api/clubs/:clubID/reviews", async (req, res) => {
   const { rating, comment } = req.body;
@@ -697,7 +698,6 @@ app.post('/api/reviews', async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 });
-
 
 app.get('/api/reviews', async (req, res) => {
   const { clubName } = req.query;
