@@ -40,6 +40,7 @@ Follow these steps to set up the Club-Hub project on your local machine:
    Run the following command to start the development server:
    ```bash
    node server.js
+   
    The application should now be running on http://localhost:8080. 
 
 
