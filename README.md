@@ -42,4 +42,14 @@ Follow these steps to set up the Club-Hub project on your local machine:
    node server.js
 - The application should now be running on http://localhost:8080. 
 
+## Deviations from PRJ566
+
+*This section lists any deviations from the original project proposal in PRJ566. Fill in the details as required.*
+
+| Feature/Aspect | Original Proposal | Final Implementation | Notes |
+|----------------|-------------------|----------------------|-------|
+|                |                   |                      |       |
+|                |                   |                      |       |
+
+
 
