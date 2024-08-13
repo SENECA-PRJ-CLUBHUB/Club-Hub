@@ -32,24 +32,38 @@ Follow these steps to set up the Club-Hub project on your local machine:
 4. **Set Up Environment Variables**:  
    Create a `.env` file in the root directory and add the required environment variables as per your setup:
    ```plaintext
-    PORT=8080
-    MONGO_URL=mongodb+srv://nishy:nishy2511@cluster0.m4wqcgx.mongodb.net/
-    SECRET_KEY=mnr6vpPGyA1
-
+   PORT=8080
+   MONGO_URL=mongodb+srv://nishy:nishy2511@cluster0.m4wqcgx.mongodb.net/
+   SECRET_KEY=mnr6vpPGyA1
 5. **Start the Server**:  
    Run the following command to start the development server:
    ```bash
    node server.js
-- The application should now be running on http://localhost:8080. 
+- The application should now be running on http://localhost:8080.
+
+6. **Login Credentials**:</br>
+   You can try the app using the usernames and passwords shown below.
+   ```bash
+   Admin Username: Mathew
+   Admin Password: admin_password
+   
+   Student1 Username : ysingh88
+   Student1 Password : sprint4Demo
+
+   Student1 Username : ypadwani89
+   Student1 Password : sprint4Demo 
 
 ## Deviations from PRJ566
 
-*This section lists any deviations from the original project proposal in PRJ566. Fill in the details as required.*
+1. Admin Profiles
+| Original Proposal : At first, it was agreed that separate administrators would oversee each club.
+| Final Implementation : Every club is supervised by a single admin.
 
-| Feature/Aspect | Original Proposal | Final Implementation | Notes |
-|----------------|-------------------|----------------------|-------|
-|                |                   |                      |       |
-|                |                   |                      |       |
+## Contact Information
+For any questions or support, please reach out to the project leader:
 
+Nishit Gaurang Shah: ngshah3@myseneca.ca
 
+---
 
+This project is developed as part of PRJ566 and PRJ666 courses at Seneca College.
