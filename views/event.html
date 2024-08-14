@@ -245,7 +245,7 @@
 
     <div id="events-container" class="events-container"></div>
 
-</br></br></br></br>
+    </br></br></br></br>
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
@@ -325,10 +325,22 @@
         }
 
         function addToCalendar(eventName, eventDate, eventTime, eventLocation, eventDescription) {
-            const formattedDate = eventDate.replace(/-/g, '') + 'T' + eventTime.replace(/:/g, '') + 'Z';
-            const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(eventName)}&dates=${formattedDate}/${formattedDate}&details=${encodeURIComponent(eventDescription)}&location=${encodeURIComponent(eventLocation)}`;
-            window.open(googleCalendarUrl, '_blank');
+            try {
+                console.log("Event Details:", eventName, eventDate, eventTime, eventLocation, eventDescription);
+
+                const formattedDate = eventDate.replace(/-/g, '') + 'T' + eventTime.replace(/:/g, '') + 'Z';
+                console.log("Formatted Date:", formattedDate);
+
+                const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(eventName)}&dates=${formattedDate}/${formattedDate}&details=${encodeURIComponent(eventDescription)}&location=${encodeURIComponent(eventLocation)}`;
+                console.log("Google Calendar URL:", googleCalendarUrl);
+
+                window.open(googleCalendarUrl, '_blank');
+            } catch (error) {
+                console.error("Error adding to calendar:", error);
+            }
         }
+
+
     </script>
 
     <footer class="content-footer">
